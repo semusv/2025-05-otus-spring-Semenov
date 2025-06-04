@@ -1,0 +1,98 @@
+### Spring VVS template
+### Java ###
+# Скомпилированные файлы
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+
+# Файлы сборки
+target/
+build/
+out/
+bin/
+.gradle/
+.mvn/
+mvnw*
+gradlew*
+gradle-wrapper.jar
+!gradle-wrapper.properties
+
+### IDE ###
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+*.ids
+*.orig
+*.swp
+*.bak
+*.tmp
+
+# Eclipse
+.settings/
+.classpath
+.project
+.factorypath
+
+# VS Code
+.vscode/
+
+### Logs ###
+logs/
+*.log
+*.log.*
+!example.log
+logback.xml
+
+### Database ###
+# Встроенные БД
+*.db
+*.h2.db
+*.mv.db
+derby.log
+
+### System ###
+.DS_Store
+Thumbs.db
+
+### Spring Boot ###
+# Локальные конфиги (но не шаблоны)
+application-local*.properties
+application-local*.yml
+application-local*.yaml
+
+### Docker ###
+docker-compose*.yml
+.dockerignore
+
+### Kubernetes ###
+kubernetes/
+
+### Env files ###
+.env
+*.env
+!.env.example
+
+### Frontend ###
+node_modules/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.min.js
+*.min.css
+
+### Test reports ###
+test-output/
+reports/
+*.eml
+
+### Temp files ###
+*.tmp
+*.temp
+~$*
+
+
