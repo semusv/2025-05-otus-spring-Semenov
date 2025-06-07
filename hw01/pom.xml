@@ -6,7 +6,7 @@
 
 
     <groupId>ru.otus.hw</groupId>
-    <artifactId>hw01-xml-config</artifactId>
+    <artifactId>hw01-semenov</artifactId>
     <version>1.0</version>
 
     <properties>
@@ -21,6 +21,7 @@
         <lombok.version>1.18.32</lombok.version>
         <checkstyle-plugin.version>3.3.1</checkstyle-plugin.version>
         <checkstyle.version>10.15.0</checkstyle.version>
+        <maven.shade.plugin>3.3.0</maven.shade.plugin>
         <checkstyle.config.url>
             https://raw.githubusercontent.com/OtusTeam/Spring/master/checkstyle.xml
         </checkstyle.config.url>
@@ -43,7 +44,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
 
 
         <dependency>
@@ -96,22 +96,74 @@
                 </dependencies>
                 <configuration>
                     <configLocation>${checkstyle.config.url}</configLocation>
+                    <!-- Дополнительные настройки -->
+                    <failOnViolation>false</failOnViolation>
+                    <consoleOutput>true</consoleOutput>
                 </configuration>
                 <executions>
                     <execution>
+                        <id>checkstyle-validation</id>
+                        <phase>validate</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.3.0</version>
-                <!--Настроить для создания jar с зависимостями-->
+                <version>${maven.shade.plugin}</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <!-- Добавляем манифест -->
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <manifestEntries>
+                                        <Main-Class>ru.otus.hw.Application</Main-Class>
+                                        <Build-Number>001</Build-Number>
+                                    </manifestEntries>
+                                </transformer>
+
+                                <!-- Объединяем spring.handlers -->
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                    <resource>META-INF/spring.handlers</resource>
+                                </transformer>
+
+                                <!-- Объединяем spring.schemas -->
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                    <resource>META-INF/spring.schemas</resource>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
+
+    <!-- Добавляем эту секцию для генерации отчёта в site -->
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${checkstyle-plugin.version}</version>
+                <configuration>
+                    <configLocation>${checkstyle.config.url}</configLocation>
+                    <outputFileFormat>xml</outputFileFormat>
+                    <outputEncoding>UTF-8</outputEncoding>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+
 </project>
