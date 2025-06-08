@@ -110,7 +110,7 @@
                 <configuration>
                     <configLocation>${checkstyle.config.url}</configLocation>
                     <!-- Дополнительные настройки -->
-                    <failOnViolation>false</failOnViolation>
+                    <!--<failOnViolation>false</failOnViolation>-->
                     <consoleOutput>true</consoleOutput>
                 </configuration>
                 <executions>
