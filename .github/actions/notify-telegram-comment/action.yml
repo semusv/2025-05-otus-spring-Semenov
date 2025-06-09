@@ -1,0 +1,51 @@
+name: 'Notify Telegram about PR comments'
+description: 'Send notification to Telegram about new PR comments'
+
+inputs:
+  bot-token:
+    description: 'Telegram bot token'
+    required: true
+  chat-id:
+    description: 'Telegram chat ID'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Prepare Telegram message
+      shell: bash
+      run: |
+        # Информация о проекте
+        PROJECT_NAME=$GITHUB_REPOSITORY
+        PR_NUMBER=${{ github.event.issue.number || github.event.pull_request.number }}
+        PR_TITLE="${{ github.event.issue.title || github.event.pull_request.title }}"
+        PR_URL="${{ github.event.comment.html_url || github.event.pull_request.html_url }}"
+        COMMENT_AUTHOR="${{ github.event.comment.user.login }}"
+        COMMENT_BODY="${{ github.event.comment.body }}"
+        WORKFLOW_URL="https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+
+        # Определяем тип комментария
+        if [[ "${{ github.event_name }}" == "pull_request_review_comment" ]]; then
+          COMMENT_TYPE="👨‍💻 Комментарий к коду"
+        else
+          COMMENT_TYPE="💬 Общий комментарий"
+        fi
+
+        # Формируем сообщение
+        MESSAGE="📦 Проект: *$PROJECT_NAME*%0A"
+        MESSAGE+="📝 PR: *#$PR_NUMBER - $PR_TITLE*%0A"
+        MESSAGE+="👤 Автор комментария: *$COMMENT_AUTHOR*%0A"
+        MESSAGE+="📌 Тип: *$COMMENT_TYPE*%0A%0A"
+        MESSAGE+="💭 Текст комментария:%0A"
+        MESSAGE+="*$COMMENT_BODY*%0A%0A"
+        MESSAGE+="🔗 [Ссылка на комментарий]($PR_URL)"
+
+        echo "TELEGRAM_MESSAGE=$MESSAGE" >> $GITHUB_ENV
+
+    - name: Notify Telegram
+      shell: bash
+      run: |
+        curl -s -X POST "https://api.telegram.org/bot${{ inputs.bot-token }}/sendMessage" \
+          -d chat_id=${{ inputs.chat-id }} \
+          -d text="${{ env.TELEGRAM_MESSAGE }}" \
+          -d parse_mode="Markdown"
