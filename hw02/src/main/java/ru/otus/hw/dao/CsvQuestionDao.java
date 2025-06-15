@@ -30,7 +30,7 @@ public class CsvQuestionDao implements QuestionDao {
     private static final String ERROR_READING_FILE = "Error reading file '%s'";
 
     // Сообщение об ошибке при парсинге CSV.
-    private static final String ERROR_PARSING_FILE = "Error parsing CSV file '%s'";
+    private static final String ERROR_PARSING_FILE = "Error parsing CSV file";
 
     // Сообщение об ошибке, если имя файла не указано.
     private static final String FILE_NAME_NOT_PROVIDED = "Test file name is not provided";
@@ -52,28 +52,34 @@ public class CsvQuestionDao implements QuestionDao {
      */
     @Override
     public List<Question> findAll() {
+        List<QuestionDto> questionDtos;
 
         try (InputStream inputStream = getResourceInputStream();
              BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-            var csvToBean = new CsvToBeanBuilder<QuestionDto>(reader)
-                    .withSkipLines(SKIP_LINES)
-                    .withSeparator(SEPARATOR)
-                    .withType(QuestionDto.class)
-                    .withOrderedResults(true)
-                    .build();
-            List<QuestionDto> questionDtos = csvToBean.stream().toList();
-            if (questionDtos.isEmpty()) {
-                throw new QuestionReadException(NO_QUESTIONS_FOUND);
-            }
-            return questionDtos.stream().map(QuestionDto::toDomainObject).toList();
+            questionDtos = parseCSVDataFromReader(reader);
         } catch (IOException e) {
             throw new QuestionReadException(
                     String.format(ERROR_READING_FILE,
                             fileNameProvider.getTestFileName()), e);
+        }
+        if (questionDtos.isEmpty()) {
+            throw new QuestionReadException(NO_QUESTIONS_FOUND);
+        }
+
+        return questionDtos.stream().map(QuestionDto::toDomainObject).toList();
+    }
+
+    private static List<QuestionDto> parseCSVDataFromReader(BufferedReader reader) {
+        var csvToBean = new CsvToBeanBuilder<QuestionDto>(reader)
+                .withSkipLines(SKIP_LINES)
+                .withSeparator(SEPARATOR)
+                .withType(QuestionDto.class)
+                .withOrderedResults(true)
+                .build();
+        try {
+            return csvToBean.parse();
         } catch (RuntimeException e) {
-            throw new QuestionReadException(
-                    String.format(ERROR_PARSING_FILE,
-                            fileNameProvider.getTestFileName()), e);
+            throw new QuestionReadException(ERROR_PARSING_FILE, e);
         }
     }
 
@@ -95,7 +101,7 @@ public class CsvQuestionDao implements QuestionDao {
         InputStream inputStream = getClass().getClassLoader()
                 .getResourceAsStream(fileName);
         if (inputStream == null) {
-            throw new IOException(CANT_READ_FILE + fileName);
+            throw new IOException(String.format(CANT_READ_FILE, fileName));
         } else {
             return inputStream;
         }

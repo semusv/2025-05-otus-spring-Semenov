@@ -1,5 +1,4 @@
-package ru.otus.hw.service;
-
+package ru.otus.hw.service.converters;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,10 +9,11 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Сервис конвертации вопросов в текст")
-class QuestionConverterImplTest {
 
-    private final QuestionConverter converter = new QuestionConverterImpl();
+@DisplayName("Сервис конвертации вопросов в текст")
+class QuestionToStringConverterImplTest {
+
+    private final QuestionConverter converter = new QuestionToStringConverterImpl();
 
     @Test
     @DisplayName("Должен корректно форматировать вопрос с ответами")

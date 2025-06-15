@@ -14,6 +14,7 @@ import ru.otus.hw.domain.Question;
 import ru.otus.hw.domain.Student;
 import ru.otus.hw.domain.TestResult;
 import ru.otus.hw.exceptions.QuestionReadException;
+import ru.otus.hw.service.converters.QuestionConverter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

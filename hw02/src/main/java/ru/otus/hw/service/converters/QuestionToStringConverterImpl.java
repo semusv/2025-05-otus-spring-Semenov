@@ -1,10 +1,10 @@
-package ru.otus.hw.service;
+package ru.otus.hw.service.converters;
 
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import ru.otus.hw.domain.Question;
 
-@Service
-public class QuestionConverterImpl implements QuestionConverter {
+@Component
+public class QuestionToStringConverterImpl implements QuestionConverter {
     private static final String ANSWER_FORMAT = "    %d) %s";
 
     private static final String QUESTION_FORMAT = "%2d. %s";
