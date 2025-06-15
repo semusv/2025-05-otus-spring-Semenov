@@ -11,6 +11,8 @@ import java.util.Scanner;
 public class StreamsIOService implements IOService {
     private static final int MAX_ATTEMPTS = 10;
 
+    private static final String ERROR_DURING_READING_INT_VALUE = "Error during reading int value";
+
     private final PrintStream printStream;
 
     private final Scanner scanner;
@@ -57,7 +59,7 @@ public class StreamsIOService implements IOService {
                 printLine(errorMessage);
             }
         }
-        throw new IllegalArgumentException("Error during reading int value");
+        throw new IllegalArgumentException(ERROR_DURING_READING_INT_VALUE);
     }
 
     @Override

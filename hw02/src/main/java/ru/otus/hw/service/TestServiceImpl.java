@@ -29,6 +29,9 @@ public class TestServiceImpl implements TestService {
     // Сообщение об ошибке чтения вопросов
     private static final String QUESTION_READ_ERROR_FORMAT = "Ошибка чтения вопросов: %s";
 
+    // Сообщение когда слишком много неправильных ответов
+    private static final String TOO_MANY_ANSWERS_ERROR_MESSAGE = "Слишком много неправильных ответов";
+
     private final IOService ioService;
 
     private final QuestionDao questionDao;
@@ -44,14 +47,18 @@ public class TestServiceImpl implements TestService {
             processQuestions(questions, testResult);
         } catch (QuestionReadException e) {
             ioService.printFormattedLine(QUESTION_READ_ERROR_FORMAT, e.getMessage());
+            testResult.clearResults();
+        } catch (IllegalArgumentException e) {
+            ioService.printLine(TOO_MANY_ANSWERS_ERROR_MESSAGE);
+            testResult.clearResults();
         }
+
         return testResult;
     }
 
     private void processQuestions(List<Question> questionList, TestResult testResult) {
         int questionNumber = 1;
-
-        for (var question: questionList) {
+        for (var question : questionList) {
             ioService.printLine(questionConverter.convertQuestionToString(question, questionNumber));
             var isAnswerValid = processUserAnswer(question, questionNumber);
             testResult.applyAnswer(question, isAnswerValid);

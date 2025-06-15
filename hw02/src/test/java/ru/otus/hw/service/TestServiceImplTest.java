@@ -86,6 +86,35 @@ class TestServiceImplTest {
     }
 
     @Test
+    @DisplayName("Должен выкинуть сообщение об ошибке и вернуть результат выполнения теста с нулевым количеством правильных ответов, когда неправильно выбирает номер ответа много раз подряд")
+    void ShouldThrowExceptionWhenSelectWrongAnswersTooMuch() {
+        String formattedSomeTestQuestion = "Formatted some test question";
+        String errorMessage = "Error during reading int value";
+        String tooManyWrongAnswersErrorMessage = "Слишком много неправильных ответов";
+
+        given(questionDao.findAll()).willReturn(testQuestions);
+        given(questionConverter.convertQuestionToString(any(Question.class), anyInt())).willReturn(formattedSomeTestQuestion);
+        given(ioService.readIntForRangeWithPrompt(anyInt(), anyInt(), anyString(), anyString()))
+                .willReturn(1)
+                .willThrow(new IllegalArgumentException(errorMessage));
+
+
+        //Action
+        TestResult result = testService.executeTestFor(student);
+
+        //Assertions
+        assertThat(result).isNotNull();
+        assertThat(result.getStudent()).isEqualTo(student);
+        assertThat(result.getRightAnswersCount()).isEqualTo(0);
+        assertThat(result.getAnsweredQuestions().size()).isEqualTo(0);
+
+        //verify
+        verify(questionDao, times(1)).findAll();
+        verify(ioService, times(1)).printLine(tooManyWrongAnswersErrorMessage);
+
+    }
+
+    @Test
     @DisplayName("Должен вернуть результат выполнения теста с нулевым количеством правильных ответов")
     void ShouldReturnTestResultWithZeroAnswers() {
         String formattedSomeTestQuestion = "Formatted some test question";
