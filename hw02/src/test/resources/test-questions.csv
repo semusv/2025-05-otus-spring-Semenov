@@ -1,0 +1,4 @@
+# text;answer1%isCorrect1|answer2%isCorrect2|answer3%isCorrect3
+What is the capital of France?;Paris%true|London%false|Berlin%false
+What is 2+2?;5%false|4%true|3%false
+Which Java keyword is used for inheritance?;extends%true|implements%false|inherits%false
