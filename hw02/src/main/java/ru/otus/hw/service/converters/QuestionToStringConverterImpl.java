@@ -5,10 +5,11 @@ import ru.otus.hw.domain.Question;
 
 @Component
 public class QuestionToStringConverterImpl implements QuestionConverter {
+    //Форматирование вопросов
     private static final String ANSWER_FORMAT = "    %d) %s";
 
+    // Форматирование ответов
     private static final String QUESTION_FORMAT = "%2d. %s";
-
 
     @Override
     public String convertQuestionToString(Question question, int questionNumber) {

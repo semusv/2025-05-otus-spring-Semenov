@@ -35,14 +35,20 @@ class CsvQuestionDaoTest {
 
     // Сообщение об ошибке, если файл не может быть прочитан.
     private static final String CANT_READ_FILE = "Can't start read file with questions: %s";
+
     // Файл с пустым содержимым.
     private static final String EMPTY_QUESTIONS_CSV = "empty-questions.csv";
+
     // Отсутствие имени файла.
     private static final String EMPTY_FILE_NAME = "";
+
     // Файл, которого нет в ресурсах.
     private static final String NON_EXISTENT_FILE_CSV = "non-existent-file.csv";
+
     // Файл с тестовыми вопросами.
     private static final String TEST_QUESTIONS_CSV = "test-questions.csv";
+
+    // Файл с некорректным форматом вопросов.
     private static final String INVALID_FORMAT_QUESTIONS_CSV = "invalid-format-questions.csv";
 
 

@@ -14,14 +14,19 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class TestServiceImpl implements TestService {
+    // Заголовок с вопросами
     private static final String TOPIC_LINE = "%nPlease answer the questions below%n";
 
+    // Начальный и конечный диапазон ответа
     private static final int MIN_ANSWER_NUMBER = 1;
 
+    // Текст приглашения пользователя к ответу на вопрос
     private static final String ANSWER_PROMPT_FORMAT = "Enter the answer for the question #%d";
 
+    // Текст при неверном ответе на вопрос
     private static final String INVALID_ANSWER_MESSAGE = "Please enter a valid answer number";
 
+    // Сообщение об ошибке чтения вопросов
     private static final String QUESTION_READ_ERROR_FORMAT = "Ошибка чтения вопросов: %s";
 
     private final IOService ioService;

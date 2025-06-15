@@ -41,15 +41,7 @@ public class CsvQuestionDao implements QuestionDao {
     // Провайдер имени файла с вопросами.
     private final TestFileNameProvider fileNameProvider;
 
-    /**
-     * Возвращает список всех вопросов из CSV-файла.
-     *
-     * @return список вопросов ({@link Question})
-     * @throws QuestionReadException если:
-     *                               - файл не найден или не может быть прочитан ({@link IOException}),
-     *                               - произошла ошибка парсинга CSV ({@link RuntimeException}),
-     *                               - в файле нет вопросов.
-     */
+
     @Override
     public List<Question> findAll() {
         List<QuestionDto> questionDtos;
@@ -83,14 +75,7 @@ public class CsvQuestionDao implements QuestionDao {
         }
     }
 
-    /**
-     * Возвращает {@link InputStream} для чтения CSV-файла с вопросами.
-     *
-     * @return поток для чтения файла
-     * @throws IOException если:
-     *                     - имя файла не указано ({@value #FILE_NAME_NOT_PROVIDED}),
-     *                     - файл не найден ({@value #CANT_READ_FILE}).
-     */
+
     private InputStream getResourceInputStream() throws IOException {
 
         String fileName = fileNameProvider.getTestFileName();
