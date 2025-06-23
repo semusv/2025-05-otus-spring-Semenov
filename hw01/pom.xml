@@ -12,12 +12,17 @@
     </parent>
 
     <properties>
+        <!--spring-->
         <spring.version>6.2.3</spring.version>
+        <!--tests-->
         <junit.version>5.10.2</junit.version>
         <mockito.version>5.10.0</mockito.version>
         <assertj.version>3.25.2</assertj.version>
-        <maven.shade.plugin>3.3.0</maven.shade.plugin>
         <mockito.junit.jupiter>5.10.0</mockito.junit.jupiter>
+        <!--shade-->
+        <maven.shade.plugin.version>3.3.0</maven.shade.plugin.version>
+        <maven.shade.plugin.build>1.0</maven.shade.plugin.build>
+        <main.class>ru.otus.hw.Application</main.class>
     </properties>
     <dependencies>
         <dependency>
@@ -62,10 +67,44 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
 
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
+                <version>${maven.shade.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <!-- Добавляем манифест -->
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <manifestEntries>
+                                        <Main-Class>${main.class}</Main-Class>
+                                        <Build-Number>${maven.shade.plugin.build}</Build-Number>
+                                    </manifestEntries>
+                                </transformer>
+                                <!-- Объединяем spring.handlers -->
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                    <resource>META-INF/spring.handlers</resource>
+                                </transformer>
+
+                                <!-- Объединяем spring.schemas -->
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                    <resource>META-INF/spring.schemas</resource>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
+
         </plugins>
     </build>
 
@@ -82,7 +121,9 @@
                     <outputEncoding>UTF-8</outputEncoding>
                 </configuration>
             </plugin>
+
+
+
         </plugins>
     </reporting>
-
 </project>
