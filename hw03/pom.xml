@@ -35,14 +35,9 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
             </plugin>
-
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <!-- Указываем главный класс -->
-                <configuration>
-                    <mainClass>ru.otus.hw.Application</mainClass>
-                </configuration>
             </plugin>
         </plugins>
     </build>
