@@ -2,3 +2,13 @@
 Есть ли жизнь на Марсе?;Это науке пока не известно%true|Конечно. Красные (НЛО) это с Марса. А зеленые (НЛО) с Венеры%false|Точно нет%false
 Как нужно загружать ресурс из jar в Java?;ClassLoader#geResourceAsStream или ClassPathResource#getInputStream%true|ClassLoader#geResource#getFile + FileReader%false|Wingardium Leviosa%false
 Какой предпочтительный способ реакции на исключения?;@SneakyThrow%false|e.printStackTrace()%false|Проброс дальше с предварительным оборачиванием в бизнес-исключение (например, QuestionReadException)%true|Игнорирование исключения%false
+Какой город является столицей Франции?;Париж%true|Лондон%false|Берлин%false|Мадрид%false
+Какая планета известна как Красная планета?;Марс%true|Венера%false|Юпитер%false|Сатурн%false
+Сколько будет 2+2?;4%true|5%false|3%false|22%false
+Какой язык выполняется в веб-браузере?;JavaScript%true|Java%false|C++%false|Python%false
+Что означает аббревиатура HTML?;HyperText Markup Language%true|Язык разметки гипертекста%false|Инструмент разметки домашней страницы%false|Язык разметки гиперпередачи%false
+Какой из этих фреймворков является Java-фреймворком?;Spring%true|Django%false|Laravel%false|Ruby on Rails%false
+Что означает аббревиатура SQL?;Structured Query Language%true|Упрощенный язык запросов%false|Стандартный язык запросов%false|Системный язык запросов%false
+Какая коллекция реализует интерфейс Queue в Java?;LinkedList%true|ArrayList%false|HashSet%false|TreeMap%false
+Какой порт используется по умолчанию для HTTP?;80%true|8080%false|443%false|21%false
+Какая аннотация создает bean в Spring?;@Component%true|@Entity%false|@Service%false|@Repository%false
