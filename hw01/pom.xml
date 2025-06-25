@@ -4,11 +4,6 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-
-    <!--<groupId>ru.otus.hw</groupId>
-    <artifactId>hw01-semenov</artifactId>
-    <version>1.0</version>-->
-
     <artifactId>hw01-semenov</artifactId>
     <parent>
         <groupId>ru.otus.hw</groupId>
@@ -17,22 +12,17 @@
     </parent>
 
     <properties>
-        <maven.compiler.target>17</maven.compiler.target>
-        <maven.compiler.source>17</maven.compiler.source>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!--spring-->
         <spring.version>6.2.3</spring.version>
-        <opencsv.version>5.9</opencsv.version>
+        <!--tests-->
         <junit.version>5.10.2</junit.version>
         <mockito.version>5.10.0</mockito.version>
         <assertj.version>3.25.2</assertj.version>
-        <lombok.version>1.18.32</lombok.version>
-        <checkstyle-plugin.version>3.3.1</checkstyle-plugin.version>
-        <checkstyle.version>10.15.0</checkstyle.version>
-        <maven.shade.plugin>3.3.0</maven.shade.plugin>
         <mockito.junit.jupiter>5.10.0</mockito.junit.jupiter>
-        <checkstyle.config.url>
-            https://raw.githubusercontent.com/OtusTeam/Spring/master/checkstyle.xml
-        </checkstyle.config.url>
+        <!--shade-->
+        <maven.shade.plugin.version>3.3.0</maven.shade.plugin.version>
+        <maven.shade.plugin.build>1.0</maven.shade.plugin.build>
+        <main.class>ru.otus.hw.Application</main.class>
     </properties>
     <dependencies>
         <dependency>
@@ -40,58 +30,34 @@
             <artifactId>spring-context</artifactId>
             <version>${spring.version}</version>
         </dependency>
-
         <dependency>
             <groupId>com.opencsv</groupId>
             <artifactId>opencsv</artifactId>
-            <version>${opencsv.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-collections</groupId>
-                    <artifactId>commons-collections</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
+
+        <!-- JUnit 5 -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <scope>test</scope>
+            <artifactId>junit-jupiter</artifactId>
             <version>${junit.version}</version>
+            <scope>test</scope>
         </dependency>
+
+        <!-- Mockito -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <version>${mockito.junit.jupiter}</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>junit-jupiter-api</artifactId>
-                    <groupId>org.junit.jupiter</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <!--
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <scope>test</scope>
             <version>${mockito.version}</version>
-        </dependency> -->
+            <scope>test</scope>
+        </dependency>
 
+        <!-- Assertj -->
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <scope>test</scope>
             <version>${assertj.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-            <version>${lombok.version}</version>
-        </dependency>
-
     </dependencies>
 
     <build>
@@ -99,34 +65,13 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>${checkstyle-plugin.version}</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.puppycrawl.tools</groupId>
-                        <artifactId>checkstyle</artifactId>
-                        <version>${checkstyle.version}</version>
-                    </dependency>
-                </dependencies>
-                <configuration>
-                    <configLocation>${checkstyle.config.url}</configLocation>
-                    <!-- Дополнительные настройки -->
-                    <!--<failOnViolation>false</failOnViolation>-->
-                    <consoleOutput>true</consoleOutput>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>checkstyle-validation</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
+
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>${maven.shade.plugin}</version>
+                <version>${maven.shade.plugin.version}</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -139,11 +84,10 @@
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <manifestEntries>
-                                        <Main-Class>ru.otus.hw.Application</Main-Class>
-                                        <Build-Number>001</Build-Number>
+                                        <Main-Class>${main.class}</Main-Class>
+                                        <Build-Number>${maven.shade.plugin.build}</Build-Number>
                                     </manifestEntries>
                                 </transformer>
-
                                 <!-- Объединяем spring.handlers -->
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
@@ -160,6 +104,7 @@
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
     </build>
 
@@ -176,7 +121,9 @@
                     <outputEncoding>UTF-8</outputEncoding>
                 </configuration>
             </plugin>
+
+
+
         </plugins>
     </reporting>
-
 </project>
