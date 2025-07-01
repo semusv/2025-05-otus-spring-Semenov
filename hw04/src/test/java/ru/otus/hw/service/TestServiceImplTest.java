@@ -3,11 +3,10 @@ package ru.otus.hw.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import ru.otus.hw.dao.QuestionDao;
 import ru.otus.hw.domain.Answer;
 import ru.otus.hw.domain.Question;
@@ -20,25 +19,29 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest(classes = {TestServiceImpl.class})
 @DisplayName("Сервис выполнения тестирования студента")
 class TestServiceImplTest {
 
-    @Mock
+
+    @MockitoBean
     private LocalizedIOService ioService;
 
-    @Mock
+    @MockitoBean
     private QuestionDao questionDao;
 
-    @Mock
+    @MockitoBean
     private QuestionConverter questionConverter;
 
-    @InjectMocks
+    @Autowired
     private TestServiceImpl testService;
 
     private Student student;

@@ -2,6 +2,8 @@ package ru.otus.hw.service.converters;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import ru.otus.hw.domain.Answer;
 import ru.otus.hw.domain.Question;
 
@@ -10,10 +12,12 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
+@SpringBootTest(classes = {QuestionToStringConverterImpl.class})
 @DisplayName("Сервис конвертации вопросов в текст")
 class QuestionToStringConverterImplTest {
 
-    private final QuestionConverter converter = new QuestionToStringConverterImpl();
+    @Autowired
+    private QuestionConverter converter ;
 
     @Test
     @DisplayName("Должен корректно форматировать вопрос с ответами")

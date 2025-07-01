@@ -1,11 +1,10 @@
-package ru.otus.hw.shell;
+package ru.otus.hw.commands;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.shell.Availability;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellMethodAvailability;
-import ru.otus.hw.commands.CommandProcessorImpl;
 
 @ShellComponent(value = "Application Commands")
 @RequiredArgsConstructor
