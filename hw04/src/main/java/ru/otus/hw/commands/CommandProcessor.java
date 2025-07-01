@@ -3,13 +3,13 @@ package ru.otus.hw.commands;
 import org.springframework.shell.Availability;
 
 public interface CommandProcessor {
-    public void start();
+    void start();
 
-    public String logIn();
+    String logIn();
 
-    public String logOut();
+    String logOut();
 
-    public String changeLanguage();
+    String changeLanguage();
 
     Availability isLogOutCommandAvailable();
 
