@@ -24,7 +24,7 @@ public class CommandProcessorImpl implements CommandProcessor {
     private final AppProperties appProperties;
 
     @Override
-    public void start() {
+    public void startTest() {
         testRunnerService.run();
     }
 

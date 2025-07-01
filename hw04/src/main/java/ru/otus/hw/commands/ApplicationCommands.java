@@ -14,24 +14,24 @@ public class ApplicationCommands {
 
     @ShellMethod(value = "Start Testing", key = {"start", "s"})
     @ShellMethodAvailability("isStartCommandAvailable")
-    public void start() {
-        commandProcessor.start();
+    public void startTest() {
+        commandProcessor.startTest();
     }
 
-    @ShellMethod(value = "Login User", key = {"login", "li"})
+    @ShellMethod(value = "Log in User", key = {"login", "li"})
     @ShellMethodAvailability("isLogInCommandAvailable")
     public String logIn() {
         return commandProcessor.logIn();
     }
 
-    @ShellMethod(value = "Logout User", key = {"logout", "lo"})
+    @ShellMethod(value = "Log out User", key = {"logout", "lo"})
     @ShellMethodAvailability("isLogOutCommandAvailable")
     public String logOut() {
         return commandProcessor.logOut();
     }
 
     @ShellMethod(value = "Change language", key = {"language", "lng", "l"})
-    public String language() {
+    public String changeLanguage() {
         return commandProcessor.changeLanguage();
     }
 

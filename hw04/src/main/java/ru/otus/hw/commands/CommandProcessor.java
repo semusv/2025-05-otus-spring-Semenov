@@ -3,7 +3,7 @@ package ru.otus.hw.commands;
 import org.springframework.shell.Availability;
 
 public interface CommandProcessor {
-    void start();
+    void startTest();
 
     String logIn();
 
