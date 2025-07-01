@@ -22,6 +22,8 @@
         <maven.compiler.source>17</maven.compiler.source>
         <!--spring-boot-->
         <spring-boot.version>3.4.3</spring-boot.version>
+        <!--spring-shell-->
+        <spring.shell.version>3.4.0</spring.shell.version>
         <!--CheckStyle-->
         <checkstyle-plugin.version>3.3.1</checkstyle-plugin.version>
         <checkstyle.version>10.15.0</checkstyle.version>
@@ -54,6 +56,12 @@
                         <artifactId>commons-collections</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.shell</groupId>
+                <artifactId>spring-shell-starter</artifactId>
+                <version>${spring.shell.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

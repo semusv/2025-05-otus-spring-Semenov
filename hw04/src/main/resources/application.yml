@@ -8,6 +8,9 @@ spring:
   output:
     ansi:
       enabled: ALWAYS
+  shell:
+    interactive:
+      enabled: true
 
 test:
   rightAnswersCountToPass: 3
