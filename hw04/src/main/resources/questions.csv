@@ -1,0 +1,14 @@
+# Добавить сюда своих вопросов. Эту строку надо пропустить при настройке CsvToBean (withSkipLines)
+Is there life on Mars?;Science doesn't know this yet%true|Certainly. The red UFO is from Mars. And green is from Venus%false|Absolutely not%false
+How should resources be loaded form jar in Java?;ClassLoader#geResourceAsStream or ClassPathResource#getInputStream%true|ClassLoader#geResource#getFile + FileReader%false|Wingardium Leviosa%false
+Which option is a good way to handle the exception?;@SneakyThrow%false|e.printStackTrace()%false|Rethrow with wrapping in business exception (for example, QuestionReadException)%true|Ignoring exception%false
+What is the capital of France?;Paris%true|London%false|Berlin%false|Madrid%false
+Which planet is known as the Red Planet?;Mars%true|Venus%false|Jupiter%false|Saturn%false
+What is 2+2?;4%true|5%false|3%false|22%false
+Which language runs in a web browser?;JavaScript%true|Java%false|C++%false|Python%false
+What does HTML stand for?;HyperText Markup Language%true|Hyperlinks and Text Markup Language%false|Home Tool Markup Language%false|Hyper Transfer Markup Language%false
+Which of these is a Java framework?;Spring%true|Django%false|Laravel%false|Ruby on Rails%false
+What does SQL stand for?;Structured Query Language%true|Simple Query Language%false|Standard Query Language%false|System Query Language%false
+Which collection implements Queue interface in Java?;LinkedList%true|ArrayList%false|HashSet%false|TreeMap%false
+What is the default port for HTTP?;80%true|8080%false|443%false|21%false
+Which annotation makes a bean in Spring?;@Component%true|@Entity%false|@Service%false|@Repository%false

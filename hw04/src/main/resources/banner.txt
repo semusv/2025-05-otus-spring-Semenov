@@ -1,0 +1,11 @@
+${AnsiColor.CYAN} ╔══════════════════════════════════╗
+${AnsiColor.CYAN} ║${AnsiColor.BLUE}████████╗███████╗███████╗████████╗${AnsiColor.CYAN}║
+${AnsiColor.CYAN} ║${AnsiColor.BLUE}╚══██╔══╝██╔════╝██╔════╝╚══██╔══╝${AnsiColor.CYAN}║
+${AnsiColor.CYAN} ║${AnsiColor.BLUE}   ██║   █████╗  ███████╗   ██║   ${AnsiColor.CYAN}║
+${AnsiColor.CYAN} ║${AnsiColor.BLUE}   ██║   ██╔══╝  ╚════██║   ██║   ${AnsiColor.CYAN}║
+${AnsiColor.CYAN} ║${AnsiColor.BLUE}   ██║   ███████╗███████║   ██║   ${AnsiColor.CYAN}║
+${AnsiColor.CYAN} ║${AnsiColor.BLUE}   ╚═╝   ╚══════╝╚══════╝   ╚═╝   ${AnsiColor.CYAN}║
+${AnsiColor.CYAN} ╠══════════════════════════════════╣
+${AnsiColor.CYAN} ║${AnsiColor.RED}        Student testing app       ${AnsiColor.CYAN}║
+${AnsiColor.CYAN} ╚══════════════════════════════════╝
+${AnsiColor.DEFAULT}
