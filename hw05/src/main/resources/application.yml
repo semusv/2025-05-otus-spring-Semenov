@@ -15,4 +15,4 @@ spring:
 
   liquibase:
     enabled: true
-    contexts: prod
+    contexts: dev

@@ -2,7 +2,7 @@ databaseChangeLog:
   - changeSet:
       id: 2025-07-06--0001-authors-data
       author: vvsemenov
-      context: prod
+      context: dev
       runOnChange: true
       changes:
         - loadData:
@@ -20,7 +20,7 @@ databaseChangeLog:
   - changeSet:
       id: 2025-07-06--0001-genres-data
       author: vvsemenov
-      context: prod
+      context: dev
       runOnChange: true
       changes:
         - loadData:
@@ -38,7 +38,7 @@ databaseChangeLog:
   - changeSet:
       id: 2025-07-06--0001-books-data
       author: vvsemenov
-      context: prod
+      context: dev
       runOnChange: true
       changes:
         - loadData:
@@ -57,7 +57,7 @@ databaseChangeLog:
   - changeSet:
       id: 2025-07-06--0001-books_genres-data
       author: vvsemenov
-      context: prod
+      context: dev
       runOnChange: true
       changes:
         - loadData:

@@ -6,4 +6,4 @@ databaseChangeLog:
   # Данные
   - includeAll:
       path: db/changelog/data/1.0/
-      context: prod
+      context: dev
