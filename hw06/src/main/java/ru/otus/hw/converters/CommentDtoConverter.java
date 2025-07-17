@@ -2,7 +2,6 @@ package ru.otus.hw.converters;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.otus.hw.dto.BookShortDto;
 import ru.otus.hw.dto.CommentDto;
 import ru.otus.hw.models.Comment;
 
@@ -12,13 +11,12 @@ public class CommentDtoConverter {
 
     private final AuthorDtoConverter authorDtoConverter;
 
-    private final BookShortDtoConverter bookShortDtoConverter;
-
     public String commentDtoToString(CommentDto commentDto) {
-        return "Id: %d, Text: %s, for book: %s".formatted(
+        return "Id: %d, Text: %s, for bookId: %s".formatted(
                 commentDto.id(),
                 commentDto.text(),
-                bookShortDtoConverter.bookShortDtoToString(commentDto.book()));
+                commentDto.bookId()
+        );
     }
 
     public CommentDto commentToDto(Comment comment) {
@@ -26,10 +24,7 @@ public class CommentDtoConverter {
             return new CommentDto(
                     comment.getId(),
                     comment.getText(),
-                    new BookShortDto(
-                            comment.getBook().getId(),
-                            comment.getBook().getTitle(),
-                            authorDtoConverter.authorToDto(comment.getBook().getAuthor())));
+                    comment.getBook().getId());
         } else {
             return null;
         }

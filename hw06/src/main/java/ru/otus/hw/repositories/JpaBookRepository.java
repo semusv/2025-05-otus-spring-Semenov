@@ -30,7 +30,7 @@ public class JpaBookRepository implements BookRepository {
 
     @Override
     public Optional<Book> findById(long id) {
-        EntityGraph<?> entityGraph = em.getEntityGraph("book-author-entity-graph");
+        EntityGraph<?> entityGraph = em.getEntityGraph("book-author-genres-entity-graph");
         Map<String, Object> properties = new HashMap<>();
         properties.put(FETCH.getKey(), entityGraph);
 

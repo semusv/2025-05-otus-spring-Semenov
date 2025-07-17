@@ -1,6 +1,5 @@
 package ru.otus.hw.repositories;
 
-import jakarta.persistence.EntityGraph;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
@@ -10,10 +9,7 @@ import org.springframework.stereotype.Repository;
 import ru.otus.hw.models.Comment;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-
-import static org.springframework.data.jpa.repository.EntityGraph.EntityGraphType.FETCH;
 
 @Repository
 public class JpaCommentRepository implements CommentRepository {
@@ -32,10 +28,7 @@ public class JpaCommentRepository implements CommentRepository {
         if (id <= 0) {
             throw new IllegalArgumentException("ID must be positive: " + id);
         }
-        EntityGraph<?> entityGraph = em.getEntityGraph("comment-with-book-and-author");
-        Map<String, Object> properties = Map.of(FETCH.getKey(), entityGraph);
-
-        return Optional.ofNullable(em.find(entityClass, id, properties));
+        return Optional.ofNullable(em.find(entityClass, id));
     }
 
     @Override
@@ -43,11 +36,7 @@ public class JpaCommentRepository implements CommentRepository {
         TypedQuery<Comment> query = em.createQuery(
                 "SELECT c FROM Comment  c WHERE c.book.id = :id",
                 entityClass);
-
-        EntityGraph<?> entityGraph = em.getEntityGraph("comment-with-book-and-author");
         query.setParameter("id", bookId);
-        query.setHint(FETCH.getKey(), entityGraph);
-
         return query.getResultList();
     }
 

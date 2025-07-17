@@ -8,9 +8,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.NamedAttributeNode;
-import jakarta.persistence.NamedEntityGraph;
-import jakarta.persistence.NamedSubgraph;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,19 +22,6 @@ import lombok.ToString;
 @Setter
 @ToString
 @Table(name = "comments")
-@NamedEntityGraph(
-        name = "comment-with-book-and-author",
-        attributeNodes = {
-                @NamedAttributeNode("book"),
-                @NamedAttributeNode(value = "book", subgraph = "book-author")
-        },
-        subgraphs = {
-                @NamedSubgraph(
-                        name = "book-author",
-                        attributeNodes = @NamedAttributeNode("author")
-                )
-        }
-)
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

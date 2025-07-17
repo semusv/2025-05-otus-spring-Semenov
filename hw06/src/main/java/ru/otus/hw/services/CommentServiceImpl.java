@@ -7,8 +7,9 @@ import ru.otus.hw.converters.CommentDtoConverter;
 import ru.otus.hw.dto.CommentDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.models.Comment;
-import ru.otus.hw.repositories.BookRepository;
 import ru.otus.hw.repositories.CommentRepository;
+import ru.otus.hw.services.providers.BookProvider;
+import ru.otus.hw.services.validators.CommentValidator;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,9 +20,11 @@ public class CommentServiceImpl implements CommentService {
 
     private final CommentDtoConverter commentDtoConverter;
 
-    private final BookRepository bookRepository;
-
     private final CommentRepository commentRepository;
+
+    private final BookProvider bookProvider;
+
+    private final CommentValidator commentValidator;
 
     @Override
     @Transactional(readOnly = true)
@@ -32,42 +35,37 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional(readOnly = true)
     public List<CommentDto> findByBookId(long bookId) {
-        if (bookRepository.notExistsById(bookId)) {
-            throw new EntityNotFoundException("Book with id %d not found".formatted(bookId));
-        }
+        bookProvider.validateBookExists(bookId);
         return commentRepository.findByBookId(bookId).stream()
                 .map(commentDtoConverter::commentToDto)
                 .toList();
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void deleteById(long id) {
         commentRepository.deleteById(id);
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public CommentDto insert(String text, long bookId) {
-        return save(0, text, bookId);
+        var comment = new Comment();
+        commentValidator.validateText(text);
+        comment.setText(text);
+        var book = bookProvider.fetchBook(bookId);
+        comment.setBook(book);
+        return commentDtoConverter.commentToDto(commentRepository.save(comment));
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public CommentDto update(long id, String text) {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Comment with id %d not found".formatted(id)));
-        return save(id, text, comment.getBook().getId());
-    }
-
-    private CommentDto save(long id, String text, long bookId) {
-        var book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new EntityNotFoundException("Book with id %d not found".formatted(bookId)));
-        if (text == null || text.isBlank()) {
-            throw new IllegalArgumentException("Comment text must not be empty");
-        }
-
-        var comment = new Comment(id, text, book);
+        commentValidator.validateText(text);
+        comment.setText(text);
         return commentDtoConverter.commentToDto(commentRepository.save(comment));
     }
+
 }

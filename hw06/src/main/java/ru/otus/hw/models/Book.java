@@ -37,6 +37,12 @@ import java.util.List;
         attributeNodes = {
                 @NamedAttributeNode("author"),
         })
+@NamedEntityGraph(
+        name = "book-author-genres-entity-graph",
+        attributeNodes = {
+                @NamedAttributeNode("author"),
+                @NamedAttributeNode("genres")
+        })
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -2,7 +2,7 @@ package ru.otus.hw.converters;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.otus.hw.dto.BookFullDto;
+import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.models.Book;
 
 import java.util.stream.Collectors;
@@ -16,33 +16,26 @@ public class BookFullDtoConverter {
 
     private final CommentDtoConverter commentDtoConverter;
 
-    public String bookFullDtoToString(BookFullDto book) {
+    public String bookFullDtoToString(BookDto book) {
         var genresString = book.genres().stream()
                 .map(genreDtoConverter::genreDtoToString)
                 .map("{%s}"::formatted)
                 .collect(Collectors.joining(", "));
 
-        var commentString = book.comments().stream()
-                .map(commentDtoConverter::commentDtoToString)
-                .map("{%s}"::formatted)
-                .collect(Collectors.joining(", "));
-
-        return "Id: %d, title: %s, author: {%s}, genres: [%s], comments: [%s]".formatted(
+        return "Id: %d, title: %s, author: {%s}, genres: [%s]".formatted(
                 book.id(),
                 book.title(),
                 authorDtoConverter.authorDtoToString(book.author()),
-                genresString,
-                commentString);
+                genresString);
     }
 
-    public BookFullDto bookToBookFullDto(Book book) {
+    public BookDto bookToBookFullDto(Book book) {
         if (book != null) {
-            return new BookFullDto(
+            return new BookDto(
                     book.getId(),
                     book.getTitle(),
                     authorDtoConverter.authorToDto(book.getAuthor()),
-                    book.getGenres().stream().map(genreDtoConverter::genreToDto).toList(),
-                    book.getComments().stream().map(commentDtoConverter::commentToDto).toList()
+                    book.getGenres().stream().map(genreDtoConverter::genreToDto).toList()
             );
         }
         return null;
