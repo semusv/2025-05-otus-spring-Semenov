@@ -46,13 +46,13 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public void deleteById(long id) {
         bookRepository.deleteById(id);
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public BookDto insert(String title, long authorId, Set<Long> genresIds) {
         var book = new Book();
         prepareBook(title, authorId, genresIds, book);
@@ -60,7 +60,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public BookDto update(long id, String title, long authorId, Set<Long> genresIds) {
         Book book = bookRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Book with id %d not found".formatted(id))

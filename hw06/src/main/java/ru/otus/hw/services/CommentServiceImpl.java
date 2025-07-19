@@ -42,13 +42,13 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public void deleteById(long id) {
         commentRepository.deleteById(id);
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public CommentDto insert(String text, long bookId) {
         var comment = new Comment();
         commentValidator.validateText(text);
@@ -59,7 +59,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public CommentDto update(long id, String text) {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Comment with id %d not found".formatted(id)));
