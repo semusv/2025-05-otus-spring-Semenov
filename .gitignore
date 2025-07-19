@@ -91,7 +91,6 @@ reports/
 *.eml
 
 ### Temp files ###
-*.tmp
 *.temp
 ~$*
 

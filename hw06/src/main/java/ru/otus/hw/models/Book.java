@@ -20,6 +20,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -67,7 +68,8 @@ public class Book {
     @OneToMany(mappedBy = "book",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
-    @Fetch(FetchMode.SUBSELECT)
+//    @Fetch(FetchMode.SUBSELECT)
+    @BatchSize(size = 50)
     @ToString.Exclude
     private List<Comment> comments;
 }
