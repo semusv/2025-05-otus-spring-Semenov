@@ -1,13 +1,12 @@
 package ru.otus.hw.repositories;
 
-import jakarta.persistence.EntityNotFoundException;
+
 import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.context.annotation.Import;
 import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Genre;
@@ -17,11 +16,9 @@ import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("Репозиторий на основе Jpa для работы с книгами ")
 @DataJpaTest
-@Import(JpaBookRepository.class)
 class JpaBookRepositoryTest {
 
     private static final long FIRST_BOOK_ID = 1L;
@@ -31,7 +28,7 @@ class JpaBookRepositoryTest {
     private static final long NON_EXIST_BOOK_ID = 999L;
 
     @Autowired
-    JpaBookRepository repositoryJpa;
+    BookRepository repositoryJpa;
 
     @Autowired
     TestEntityManager em;
@@ -187,18 +184,12 @@ class JpaBookRepositoryTest {
         assertThat(em.find(Book.class, FIRST_BOOK_ID)).isNull();
     }
 
-    @DisplayName("Должен выбрасывать исключение при удалении несуществующей книги")
-    @Test
-    void shouldThrowExceptionWhenDeletingNonExistingBook() {
-        //then
-        assertThrows(EntityNotFoundException.class, () -> repositoryJpa.deleteById(NON_EXIST_BOOK_ID));
-    }
 
     @DisplayName("Должен возвращать true если книги не существует")
     @Test
     void shouldReturnTrueWhenBookNotExists() {
         //when
-        boolean result = repositoryJpa.notExistsById(NON_EXIST_BOOK_ID);
+        boolean result = !repositoryJpa.existsById(NON_EXIST_BOOK_ID);
         //then
         assertThat(result).isTrue();
     }
@@ -207,7 +198,7 @@ class JpaBookRepositoryTest {
     @Test
     void shouldReturnFalseWhenBookExists() {
         //when
-        boolean result = repositoryJpa.notExistsById(FIRST_BOOK_ID);
+        boolean result = !repositoryJpa.existsById(FIRST_BOOK_ID);
         //then
         assertThat(result).isFalse();
     }

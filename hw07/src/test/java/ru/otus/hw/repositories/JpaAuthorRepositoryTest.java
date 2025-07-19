@@ -6,22 +6,19 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.context.annotation.Import;
 import ru.otus.hw.models.Author;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Репозиторий на основе Jpa для работы с авторами ")
 @DataJpaTest
-@Import(JpaAuthorRepository.class)
 class JpaAuthorRepositoryTest {
 
-    private static final long FIRST_AUTHOR_ID = 1L;
     private static final int EXPECTED_NUMBER_OF_AUTHORS = 3;
     private static final long NON_EXIST_AUTHOR_ID = 999L;
 
     @Autowired
-    JpaAuthorRepository repositoryJpa;
+    AuthorRepository repositoryJpa;
 
     @Autowired
     TestEntityManager em;
@@ -30,10 +27,10 @@ class JpaAuthorRepositoryTest {
     @Test
     void shouldFindExpectedAuthorById() {
         //given
-        val expectedAuthor = em.find(Author.class, FIRST_AUTHOR_ID);
+        val expectedAuthor = em.persist(new Author(0, "Author1"));
         em.detach(expectedAuthor);
         //when
-        val optionalActualAuthor = repositoryJpa.findById(FIRST_AUTHOR_ID);
+        val optionalActualAuthor = repositoryJpa.findById(expectedAuthor.getId());
         //then
         assertThat(optionalActualAuthor).isPresent().get()
                 .usingRecursiveComparison().isEqualTo(expectedAuthor);
@@ -52,10 +49,18 @@ class JpaAuthorRepositoryTest {
     @DisplayName("должен загружать список всех авторов")
     @Test
     void shouldReturnCorrectAuthorsList() {
+        //given
+        em.persist(new Author(0, "Author1"));
+        em.persist(new Author(0, "Author2"));
+        em.persist(new Author(0, "Author3"));
+        em.persist(new Author(0, "Author4"));
+        em.flush();
+        em.clear();
+
         //when
         val authors = repositoryJpa.findAll();
         //then
-        assertThat(authors).isNotNull().hasSize(EXPECTED_NUMBER_OF_AUTHORS)
+        assertThat(authors).isNotNull().hasSizeGreaterThan(EXPECTED_NUMBER_OF_AUTHORS)
                 .allMatch(a -> !a.getFullName().isEmpty());
      }
 

@@ -13,8 +13,6 @@ import ru.otus.hw.converters.AuthorDtoConverter;
 import ru.otus.hw.converters.CommentDtoConverter;
 import ru.otus.hw.dto.CommentDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
-import ru.otus.hw.repositories.JpaBookRepository;
-import ru.otus.hw.repositories.JpaCommentRepository;
 import ru.otus.hw.services.providers.BookRepositoryProvider;
 import ru.otus.hw.services.validators.CommentValidatorImpl;
 
@@ -29,8 +27,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 @Import({CommentServiceImpl.class,
         CommentDtoConverter.class,
         AuthorDtoConverter.class,
-        JpaBookRepository.class,
-        JpaCommentRepository.class,
         CommentValidatorImpl.class,
         BookRepositoryProvider.class})
 @Transactional(propagation = Propagation.NEVER)
@@ -94,7 +90,8 @@ class CommentServiceImplTest {
     @DisplayName("Должен бросать исключение при удалении несуществующего комментария")
     void deleteById_shouldThrowForNonExistingId() {
         assertThatThrownBy(() -> commentService.deleteById(999L))
-                .isInstanceOf(jakarta.persistence.EntityNotFoundException.class);
+                .isInstanceOf(EntityNotFoundException.class)
+                .hasMessageContaining("Comment with id 999 not found");
     }
 
     @Test

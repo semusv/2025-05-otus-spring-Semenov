@@ -9,8 +9,6 @@ import ru.otus.hw.models.Comment;
 @RequiredArgsConstructor
 public class CommentDtoConverter {
 
-    private final AuthorDtoConverter authorDtoConverter;
-
     public String commentDtoToString(CommentDto commentDto) {
         return "Id: %d, Text: %s, for bookId: %s".formatted(
                 commentDto.id(),

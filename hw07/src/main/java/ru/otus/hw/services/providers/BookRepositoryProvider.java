@@ -20,7 +20,7 @@ public class BookRepositoryProvider implements BookProvider {
 
     @Override
     public void validateBookExists(long id) throws EntityNotFoundException {
-        if (bookRepository.notExistsById(id)) {
+        if (!bookRepository.existsById(id)) {
             throw new EntityNotFoundException("Book with id %d not found".formatted(id));
         }
     }

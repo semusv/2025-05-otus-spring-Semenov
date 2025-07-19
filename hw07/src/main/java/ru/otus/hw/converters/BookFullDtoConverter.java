@@ -14,7 +14,6 @@ public class BookFullDtoConverter {
 
     private final GenreDtoConverter genreDtoConverter;
 
-    private final CommentDtoConverter commentDtoConverter;
 
     public String bookFullDtoToString(BookDto book) {
         var genresString = book.genres().stream()

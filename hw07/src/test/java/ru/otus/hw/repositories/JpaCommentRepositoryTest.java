@@ -1,22 +1,19 @@
 package ru.otus.hw.repositories;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.val;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.context.annotation.Import;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Comment;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+
 
 @DisplayName("Репозиторий на основе Jpa для работы с комментариями ")
 @DataJpaTest
-@Import(JpaCommentRepository.class)
 class JpaCommentRepositoryTest {
 
     private static final long FIRST_COMMENT_ID = 1L;
@@ -27,7 +24,7 @@ class JpaCommentRepositoryTest {
 
 
     @Autowired
-    JpaCommentRepository repositoryJpa;
+    CommentRepository repositoryJpa;
 
     @Autowired
     TestEntityManager em;
@@ -67,14 +64,6 @@ class JpaCommentRepositoryTest {
 
         // then
         assertThat(optionalComment).isEmpty();
-    }
-
-    @DisplayName("Должен выбрасывать исключение при поиске с невалидным id")
-    @Test
-    void shouldThrowExceptionWhenFindByInvalidId() {
-        // then
-        assertThrows(IllegalArgumentException.class, () -> repositoryJpa.findById(0L));
-        assertThrows(IllegalArgumentException.class, () -> repositoryJpa.findById(-1L));
     }
 
     @DisplayName("Должен загружать список комментариев по id книги")
@@ -173,13 +162,6 @@ class JpaCommentRepositoryTest {
         assertThat(em.find(Comment.class, FIRST_COMMENT_ID)).isNull();
     }
 
-    @DisplayName("Должен выбрасывать исключение при удалении несуществующего комментария")
-    @Test
-    void shouldThrowExceptionWhenDeletingNonExistingComment() {
-        // then
-        assertThrows(EntityNotFoundException.class,
-                () -> repositoryJpa.deleteById(NON_EXIST_COMMENT_ID));
-    }
 
     @DisplayName("Должен возвращать true, если комментарий существует")
     @Test

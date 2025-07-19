@@ -20,7 +20,7 @@ public class GenreRepositoryProvider implements GenreProvider {
     @Override
     public List<Genre> fetchGenres(Set<Long> ids) throws EntityNotFoundException {
 
-        List<Genre> genres = genreRepository.findAllByIds(ids);
+        List<Genre> genres = genreRepository.findAllById(ids);
         Set<Long> foundIds = genres.stream().map(Genre::getId).collect(Collectors.toSet());
 
         if (!foundIds.containsAll(ids)) {

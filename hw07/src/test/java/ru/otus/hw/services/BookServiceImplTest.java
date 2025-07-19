@@ -9,11 +9,13 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import ru.otus.hw.converters.*;
+import ru.otus.hw.converters.AuthorDtoConverter;
+import ru.otus.hw.converters.BookFullDtoConverter;
+import ru.otus.hw.converters.CommentDtoConverter;
+import ru.otus.hw.converters.GenreDtoConverter;
 import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.dto.GenreDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
-import ru.otus.hw.repositories.*;
 import ru.otus.hw.services.providers.AuthorRepositoryProvider;
 import ru.otus.hw.services.providers.GenreRepositoryProvider;
 import ru.otus.hw.services.validators.BookValidatorImpl;
@@ -33,10 +35,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
         AuthorDtoConverter.class,
         GenreDtoConverter.class,
         CommentDtoConverter.class,
-        JpaAuthorRepository.class,
-        JpaGenreRepository.class,
-        JpaBookRepository.class,
-        JpaCommentRepository.class,
         AuthorRepositoryProvider.class,
         GenreRepositoryProvider.class,
         BookValidatorImpl.class
