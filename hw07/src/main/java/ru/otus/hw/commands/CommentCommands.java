@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
-import ru.otus.hw.converters.CommentDtoConverter;
+import ru.otus.hw.mappers.CommentMapper;
 import ru.otus.hw.services.CommentService;
 
 import java.util.stream.Collectors;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class CommentCommands {
     private final CommentService commentService;
 
-    private final CommentDtoConverter commentDtoConverter;
+    private final CommentMapper commentDtoConverter;
 
     // cbid 1
     @ShellMethod(value = "Find comment by id", key = "cbid")

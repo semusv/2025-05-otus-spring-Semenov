@@ -3,7 +3,7 @@ package ru.otus.hw.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.otus.hw.converters.BookFullDtoConverter;
+import ru.otus.hw.mappers.BookMapper;
 import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.models.Book;
@@ -23,7 +23,7 @@ public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
 
-    private final BookFullDtoConverter bookFullDtoConverter;
+    private final BookMapper bookMapper;
 
     private final AuthorProvider authorProvider;
 
@@ -34,14 +34,14 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional(readOnly = true)
     public Optional<BookDto> findById(long id) {
-        return bookRepository.findById(id).map(bookFullDtoConverter::bookToBookFullDto);
+        return bookRepository.findById(id).map(bookMapper::bookToBookFullDto);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<BookDto> findAll() {
         return bookRepository.findAll().stream()
-                .map(bookFullDtoConverter::bookToBookFullDto)
+                .map(bookMapper::bookToBookFullDto)
                 .toList();
     }
 
@@ -59,7 +59,7 @@ public class BookServiceImpl implements BookService {
     public BookDto insert(String title, long authorId, Set<Long> genresIds) {
         var book = new Book();
         prepareBook(title, authorId, genresIds, book);
-        return bookFullDtoConverter.bookToBookFullDto(bookRepository.save(book));
+        return bookMapper.bookToBookFullDto(bookRepository.save(book));
     }
 
     @Override
@@ -69,7 +69,7 @@ public class BookServiceImpl implements BookService {
                 () -> new EntityNotFoundException("Book with id %d not found".formatted(id))
         );
         prepareBook(title, authorId, genresIds, book);
-        return bookFullDtoConverter.bookToBookFullDto(bookRepository.save(book));
+        return bookMapper.bookToBookFullDto(bookRepository.save(book));
     }
 
     private void prepareBook(String title, long authorId, Set<Long> genresIds, Book book) {

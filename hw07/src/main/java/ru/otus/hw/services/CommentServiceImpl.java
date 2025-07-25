@@ -3,7 +3,7 @@ package ru.otus.hw.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.otus.hw.converters.CommentDtoConverter;
+import ru.otus.hw.mappers.CommentMapper;
 import ru.otus.hw.dto.CommentDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.models.Comment;
@@ -18,7 +18,7 @@ import java.util.Optional;
 @Service
 public class CommentServiceImpl implements CommentService {
 
-    private final CommentDtoConverter commentDtoConverter;
+    private final CommentMapper commentDtoConverter;
 
     private final CommentRepository commentRepository;
 

@@ -6,13 +6,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import ru.otus.hw.converters.AuthorDtoConverter;
-import ru.otus.hw.converters.BookFullDtoConverter;
-import ru.otus.hw.converters.CommentDtoConverter;
-import ru.otus.hw.converters.GenreDtoConverter;
+import ru.otus.hw.mappers.AuthorMapper;
+import ru.otus.hw.mappers.BookMapper;
+import ru.otus.hw.mappers.CommentMapper;
+import ru.otus.hw.mappers.GenreMapper;
 import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.dto.GenreDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
@@ -31,15 +28,14 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 @DataJpaTest
 @Import({
         BookServiceImpl.class,
-        BookFullDtoConverter.class,
-        AuthorDtoConverter.class,
-        GenreDtoConverter.class,
-        CommentDtoConverter.class,
+        BookMapper.class,
+        AuthorMapper.class,
+        GenreMapper.class,
+        CommentMapper.class,
         AuthorRepositoryProvider.class,
         GenreRepositoryProvider.class,
         BookValidatorImpl.class
 })
-@Transactional(propagation = Propagation.NEVER)
 class BookServiceImplTest {
 
     private final BookService bookService;
@@ -101,7 +97,6 @@ class BookServiceImplTest {
 
     @Test
     @DisplayName("Должен удалять книгу по id")
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     void deleteById_shouldDeleteBook() {
         long bookId = 1L;
         assertThat(bookService.findById(bookId)).isPresent();
@@ -114,7 +109,6 @@ class BookServiceImplTest {
 
     @Test
     @DisplayName("Должен обновлять существующую книгу")
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     void update_shouldUpdateExistingBook() {
         long bookId = 1L;
         String updatedTitle = "Updated Title";
@@ -133,7 +127,6 @@ class BookServiceImplTest {
 
     @Test
     @DisplayName("Должен создавать новую книгу")
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     void insert_shouldCreateNewBook() {
         String title = "New Book Title";
         long authorId = 1L;

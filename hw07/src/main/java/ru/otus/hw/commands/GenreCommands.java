@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
-import ru.otus.hw.converters.GenreDtoConverter;
+import ru.otus.hw.mappers.GenreMapper;
 import ru.otus.hw.services.GenreService;
 
 import java.util.Set;
@@ -17,7 +17,7 @@ public class GenreCommands {
 
     private final GenreService genreService;
 
-    private final GenreDtoConverter genreDtoConverter;
+    private final GenreMapper genreDtoConverter;
 
     // ag
     @ShellMethod(value = "Find all genres", key = "ag")

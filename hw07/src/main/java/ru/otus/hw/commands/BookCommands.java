@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
-import ru.otus.hw.converters.BookFullDtoConverter;
+import ru.otus.hw.mappers.BookMapper;
 import ru.otus.hw.services.BookService;
 
 import java.util.Set;
@@ -17,13 +17,13 @@ public class BookCommands {
 
     private final BookService bookService;
 
-    private final BookFullDtoConverter bookFullDtoConverter;
+    private final BookMapper bookMapper;
 
     //ab
     @ShellMethod(value = "Find all books", key = "ab")
     public String findAllBooks() {
         return bookService.findAll().stream()
-                .map(bookFullDtoConverter::bookFullDtoToString)
+                .map(bookMapper::bookFullDtoToString)
                 .collect(Collectors.joining("," + System.lineSeparator()));
     }
 
@@ -31,7 +31,7 @@ public class BookCommands {
     @ShellMethod(value = "Find book by id", key = "bbid")
     public String findBookById(@ShellOption(value = "id") long id) {
         return bookService.findById(id)
-                .map(bookFullDtoConverter::bookFullDtoToString)
+                .map(bookMapper::bookFullDtoToString)
                 .orElse("Book with id %d not found".formatted(id));
     }
 
@@ -41,7 +41,7 @@ public class BookCommands {
                              @ShellOption(value = "aid")long authorId,
                              @ShellOption(value = "gids")Set<Long> genresIds) {
         var savedBook = bookService.insert(title, authorId, genresIds);
-        return bookFullDtoConverter.bookFullDtoToString(savedBook);
+        return bookMapper.bookFullDtoToString(savedBook);
     }
 
     // bupd 4 editedBook 3 2,5
@@ -51,7 +51,7 @@ public class BookCommands {
                              @ShellOption(value = "aid")long authorId,
                              @ShellOption(value = "gids")Set<Long> genresIds) {
         var savedBook = bookService.update(id, title, authorId, genresIds);
-        return bookFullDtoConverter.bookFullDtoToString(savedBook);
+        return bookMapper.bookFullDtoToString(savedBook);
     }
 
     // bdel 4

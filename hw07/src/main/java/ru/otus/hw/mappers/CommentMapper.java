@@ -1,4 +1,4 @@
-package ru.otus.hw.converters;
+package ru.otus.hw.mappers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -7,7 +7,7 @@ import ru.otus.hw.models.Comment;
 
 @Component
 @RequiredArgsConstructor
-public class CommentDtoConverter {
+public class CommentMapper {
 
     public String commentDtoToString(CommentDto commentDto) {
         return "Id: %d, Text: %s, for bookId: %s".formatted(

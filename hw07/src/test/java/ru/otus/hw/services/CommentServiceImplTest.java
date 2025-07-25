@@ -6,11 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import ru.otus.hw.converters.AuthorDtoConverter;
-import ru.otus.hw.converters.CommentDtoConverter;
+import ru.otus.hw.mappers.AuthorMapper;
+import ru.otus.hw.mappers.CommentMapper;
 import ru.otus.hw.dto.CommentDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.services.providers.BookRepositoryProvider;
@@ -25,11 +22,10 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 @DisplayName("Интеграционный тест для сервиса комментариев")
 @DataJpaTest
 @Import({CommentServiceImpl.class,
-        CommentDtoConverter.class,
-        AuthorDtoConverter.class,
+        CommentMapper.class,
+        AuthorMapper.class,
         CommentValidatorImpl.class,
         BookRepositoryProvider.class})
-@Transactional(propagation = Propagation.NEVER)
 class CommentServiceImplTest {
 
     private final CommentService commentService;
@@ -76,7 +72,6 @@ class CommentServiceImplTest {
 
     @Test
     @DisplayName("Должен удалять комментарий по id")
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     void deleteById_shouldDeleteComment() {
         long commentId = 1L;
         assertThat(commentService.findById(commentId)).isPresent();
@@ -96,7 +91,6 @@ class CommentServiceImplTest {
 
     @Test
     @DisplayName("Должен создавать новый комментарий")
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     void insert_shouldCreateNewComment() {
         String commentText = "New Test Comment";
         long bookId = 1L;
@@ -132,7 +126,6 @@ class CommentServiceImplTest {
 
     @Test
     @DisplayName("Должен обновлять существующий комментарий")
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     void update_shouldUpdateExistingComment() {
         long commentId = 1L;
         String updatedText = "Updated Text";
