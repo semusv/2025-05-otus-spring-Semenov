@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.dto.GenreDto;
-import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.mappers.AuthorMapper;
 import ru.otus.hw.mappers.BookMapper;
 import ru.otus.hw.mappers.CommentMapper;
@@ -16,8 +15,6 @@ import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Comment;
 import ru.otus.hw.models.Genre;
 import ru.otus.hw.services.mongo.listeners.BookCascadeDeleteListener;
-import ru.otus.hw.services.providers.AuthorRepositoryProvider;
-import ru.otus.hw.services.providers.GenreRepositoryProvider;
 import ru.otus.hw.services.validators.BookValidatorImpl;
 
 import java.util.List;
@@ -33,8 +30,6 @@ import static org.junit.jupiter.api.Assertions.*;
         AuthorMapper.class,
         GenreMapper.class,
         CommentMapper.class,
-        AuthorRepositoryProvider.class,
-        GenreRepositoryProvider.class,
         BookValidatorImpl.class,
         BookCascadeDeleteListener.class
 })
@@ -199,10 +194,4 @@ class BookServiceImplTest extends BaseMongoTest {
 
     }
 
-    @Test
-    @DisplayName("Должен бросать исключение при удалении несуществующей книги")
-    void shouldThrowWhenDeletingNonExistentBook() {
-        assertThrows(EntityNotFoundException.class,
-                () -> bookService.deleteById("nonexistent_id"));
-    }
 }

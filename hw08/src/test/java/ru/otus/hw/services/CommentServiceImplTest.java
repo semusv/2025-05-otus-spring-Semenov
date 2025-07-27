@@ -10,7 +10,6 @@ import ru.otus.hw.mappers.CommentMapper;
 import ru.otus.hw.models.Author;
 import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Comment;
-import ru.otus.hw.services.providers.BookRepositoryProvider;
 import ru.otus.hw.services.validators.CommentValidatorImpl;
 
 import java.util.List;
@@ -22,8 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import({CommentServiceImpl.class,
         CommentMapper.class,
         AuthorMapper.class,
-        CommentValidatorImpl.class,
-        BookRepositoryProvider.class})
+        CommentValidatorImpl.class})
 class CommentServiceImplTest extends BaseMongoTest {
 
     private final CommentService commentService;
