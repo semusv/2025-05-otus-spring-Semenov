@@ -10,7 +10,6 @@ import ru.otus.hw.mappers.AuthorMapper;
 import ru.otus.hw.mappers.CommentMapper;
 import ru.otus.hw.dto.CommentDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
-import ru.otus.hw.services.providers.BookRepositoryProvider;
 import ru.otus.hw.services.validators.CommentValidatorImpl;
 
 import java.util.List;
@@ -24,8 +23,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 @Import({CommentServiceImpl.class,
         CommentMapper.class,
         AuthorMapper.class,
-        CommentValidatorImpl.class,
-        BookRepositoryProvider.class})
+        CommentValidatorImpl.class})
 class CommentServiceImplTest {
 
     private final CommentService commentService;

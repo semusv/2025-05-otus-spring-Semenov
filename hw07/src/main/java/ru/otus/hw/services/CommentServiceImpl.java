@@ -6,9 +6,10 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.mappers.CommentMapper;
 import ru.otus.hw.dto.CommentDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
+import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Comment;
+import ru.otus.hw.repositories.BookRepository;
 import ru.otus.hw.repositories.CommentRepository;
-import ru.otus.hw.services.providers.BookProvider;
 import ru.otus.hw.services.validators.CommentValidator;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
 
-    private final BookProvider bookProvider;
+    private final BookRepository bookRepository;
 
     private final CommentValidator commentValidator;
 
@@ -35,7 +36,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional(readOnly = true)
     public List<CommentDto> findByBookId(long bookId) {
-        bookProvider.validateBookExists(bookId);
+        validateBookExists(bookId);
         return commentRepository.findByBookId(bookId).stream()
                 .map(commentDtoConverter::commentToDto)
                 .toList();
@@ -56,7 +57,7 @@ public class CommentServiceImpl implements CommentService {
         var comment = new Comment();
         commentValidator.validateText(text);
         comment.setText(text);
-        var book = bookProvider.fetchBook(bookId);
+        var book = fetchBook(bookId);
         comment.setBook(book);
         return commentDtoConverter.commentToDto(commentRepository.save(comment));
     }
@@ -71,4 +72,14 @@ public class CommentServiceImpl implements CommentService {
         return commentDtoConverter.commentToDto(commentRepository.save(comment));
     }
 
+    private Book fetchBook(long id) throws EntityNotFoundException {
+        return bookRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Book with id %d not found".formatted(id)));
+    }
+
+    private void validateBookExists(long id) throws EntityNotFoundException {
+        if (!bookRepository.existsById(id)) {
+            throw new EntityNotFoundException("Book with id %d not found".formatted(id));
+        }
+    }
 }

@@ -13,8 +13,6 @@ import ru.otus.hw.mappers.GenreMapper;
 import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.dto.GenreDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
-import ru.otus.hw.services.providers.AuthorRepositoryProvider;
-import ru.otus.hw.services.providers.GenreRepositoryProvider;
 import ru.otus.hw.services.validators.BookValidatorImpl;
 
 import java.util.List;
@@ -32,8 +30,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
         AuthorMapper.class,
         GenreMapper.class,
         CommentMapper.class,
-        AuthorRepositoryProvider.class,
-        GenreRepositoryProvider.class,
         BookValidatorImpl.class
 })
 class BookServiceImplTest {
