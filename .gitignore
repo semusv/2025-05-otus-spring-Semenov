@@ -74,6 +74,7 @@ kubernetes/
 ### Env files ###
 .env
 *.env
+.env.dev
 !.env.example
 
 ### Frontend ###

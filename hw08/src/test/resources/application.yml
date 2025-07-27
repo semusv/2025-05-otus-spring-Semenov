@@ -1,0 +1,20 @@
+spring:
+  data:
+    mongodb:
+      port: 0
+      database: book_library_test
+      event-listeners:
+        enabled: true
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 4.0.2
+
+mongock:
+  enabled: false
+
+logging:
+  level:
+    de.flapdoodle.embed: DEBUG
+    org.springframework.data.mongodb: TRACE
