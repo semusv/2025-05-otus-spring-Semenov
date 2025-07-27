@@ -57,7 +57,7 @@ public class CommentServiceImpl implements CommentService {
         var comment = new Comment();
         commentValidator.validateText(text);
         comment.setText(text);
-        var book = fetchBook(bookId);
+        var book = getBookById(bookId);
         comment.setBook(book);
         return commentDtoConverter.commentToDto(commentRepository.save(comment));
     }
@@ -72,7 +72,7 @@ public class CommentServiceImpl implements CommentService {
         return commentDtoConverter.commentToDto(commentRepository.save(comment));
     }
 
-    private Book fetchBook(long id) throws EntityNotFoundException {
+    private Book getBookById(long id) throws EntityNotFoundException {
         return bookRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Book with id %d not found".formatted(id)));
     }

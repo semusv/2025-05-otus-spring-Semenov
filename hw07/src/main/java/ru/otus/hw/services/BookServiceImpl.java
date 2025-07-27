@@ -77,17 +77,17 @@ public class BookServiceImpl implements BookService {
     private void prepareBook(String title, long authorId, Set<Long> genresIds, Book book) {
         book.setTitle(title);
         bookValidator.validateTitle(book.getTitle());
-        book.setAuthor(fetchAuthor(authorId));
-        book.setGenres(fetchGenres(genresIds));
+        book.setAuthor(getAuthorById(authorId));
+        book.setGenres(getGenresByIds(genresIds));
         bookValidator.validateGenres(book.getGenres());
     }
 
-    private Author fetchAuthor(long id) throws EntityNotFoundException {
+    private Author getAuthorById(long id) throws EntityNotFoundException {
         return authorRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Author with id %d not found".formatted(id)));
     }
 
-    private List<Genre> fetchGenres(Set<Long> ids) throws EntityNotFoundException {
+    private List<Genre> getGenresByIds(Set<Long> ids) throws EntityNotFoundException {
 
         List<Genre> genres = genreRepository.findAllById(ids);
         Set<Long> foundIds = genres.stream().map(Genre::getId).collect(Collectors.toSet());
