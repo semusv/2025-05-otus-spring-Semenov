@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2025-07-11--0002-comments
+      author: vvsemenov
+      comment: Создание таблицы comments
+      changes:
+        - createTable:
+            tableName: comments
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: book_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_comments_books
+                    references: books(id)
+                    deleteCascade: true
+              - column:
+                  name: text
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
