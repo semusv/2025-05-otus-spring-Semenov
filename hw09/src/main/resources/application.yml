@@ -1,6 +1,10 @@
+server:
+  port: 8085
+
 spring:
   messages:
     encoding: UTF-8
+
 
   output:
     ansi:

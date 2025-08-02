@@ -1,6 +1,8 @@
 package ru.otus.hw.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +17,8 @@ public class CommentController {
 
     private final CommentService commentService;
 
+    private final MessageSource messageSource;
+
     @PostMapping("/books/{id}/comments/add")
     public String addCommentToBook(@PathVariable("id") Long id,
                                    @ModelAttribute("comment") CommentDto commentDto) {
@@ -28,7 +32,10 @@ public class CommentController {
                                 RedirectAttributes redirectAttributes) {
         commentService.deleteById(commentId);
 
-        redirectAttributes.addFlashAttribute("message", "Комментарий успешно удален");
+        String successMsg = messageSource.getMessage("comments.success.deleted", null,
+                LocaleContextHolder.getLocale());
+
+        redirectAttributes.addFlashAttribute("message", successMsg);
         return "redirect:/books/" + id + "/edit#comments-section";
     }
 }
