@@ -220,6 +220,7 @@ small {
 /* Кнопки и действия */
 /* ==================== */
 .btn {
+    /* Общие стили для всех элементов */
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -235,6 +236,14 @@ small {
     font-family: 'Roboto', sans-serif;
     font-weight: 500;
     white-space: nowrap;
+    background-color: var(--btn-bg-color, #007bff);
+    /* Задаём фон явно */
+
+    /* Сброс браузерных стилей для button */
+    appearance: none;
+    -webkit-appearance: none;
+    margin: 0;
+    /* Убираем возможные margin у button */
 }
 
 .btn:hover {
@@ -379,6 +388,12 @@ small {
     border-left: 4px solid #2e7d32;
 }
 
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-left: 4px solid #721c24;
+}
+
 /* Кнопка закрытия */
 .alert .close {
     position: absolute;
@@ -513,7 +528,7 @@ select[multiple] option:hover {
     display: flex;
     justify-content: flex-end;
     gap: 1rem;
-    margin-top: 2rem;
+    width: 100%;
 }
 
 .form-hint {

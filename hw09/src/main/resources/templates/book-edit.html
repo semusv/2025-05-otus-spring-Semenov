@@ -30,7 +30,7 @@
         <header class="page-header">
             <h1 th:text="*{id != 0} ? *{title} : #{book.header.new}">Название книги или NEW</h1>
 
-            <div class="action-buttons" th:if="*{id != 0}">
+            <div class="form-actions" th:if="*{id != 0}">
                 <a th:href="@{'/books/' + *{id} + '/display'}" href="book-view.html" class="btn btn-success"
                     th:text="#{button.view}">
                     Просмотр
@@ -41,7 +41,10 @@
                         Удалить
                     </button>
                 </form>
+
+
             </div>
+
         </header>
 
         <!-- Основная форма -->
