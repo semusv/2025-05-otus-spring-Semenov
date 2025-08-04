@@ -11,14 +11,9 @@ import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.dto.BookUpdateDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.mappers.AuthorMapperImpl;
-import ru.otus.hw.mappers.BookMapper;
 import ru.otus.hw.mappers.BookMapperImpl;
 import ru.otus.hw.mappers.CommentMapperImpl;
 import ru.otus.hw.mappers.GenreMapperImpl;
-import ru.otus.hw.repositories.AuthorRepository;
-import ru.otus.hw.repositories.BookRepository;
-import ru.otus.hw.repositories.GenreRepository;
-import ru.otus.hw.services.validators.BookValidator;
 import ru.otus.hw.services.validators.BookValidatorImpl;
 
 import java.util.List;
