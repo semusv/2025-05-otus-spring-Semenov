@@ -25,10 +25,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -111,7 +108,7 @@ class BookControllerTest {
 
         when(bookService.findById(bookId)).thenReturn(bookDto);
         when(commentService.findByBookId(bookId)).thenReturn(comments);
-        when(bookMapper.toBookViewDto(bookDto,comments)).thenReturn(bookViewDto);
+        when(bookMapper.toBookViewDto(bookDto, comments)).thenReturn(bookViewDto);
 
         // when & then
         mockMvc.perform(get("/books/{id}", bookId))
@@ -122,18 +119,18 @@ class BookControllerTest {
     }
 
     @Test
-    @DisplayName("GET /books/{id}/edit - должен показать форму редактирования")
-    void editBook_ShouldReturnEditForm() throws Exception {
+    @DisplayName("GET /books/{id}/edit - должен показать форму редактирования с данными книги")
+    void editBook_ShouldReturnEditFormWithBookData() throws Exception {
         // given
         long bookId = 1L;
-        BookDto bookDto = new BookDto(bookId, "Книга",
-                new AuthorDto(1L, "Автор"), List.of(new GenreDto(1L, "Жанр")));
-
-        List<CommentDto> comments = List.of(new CommentDto(1L, "Коммент", bookId));
-        List<GenreDto> genres = List.of(new GenreDto(1L, "Жанр"));
-        List<AuthorDto> authors = List.of(new AuthorDto(1L, "Автор"));
+        BookDto bookDto = new BookDto(bookId, "Test Book", null, null);
+        BookUpdateDto bookUpdateDto = new BookUpdateDto(bookId, "Test Book", 1L, List.of(1L, 2L));
+        List<CommentDto> comments = List.of(new CommentDto(1L, "Комментарий", bookId));
+        List<GenreDto> genres = List.of(new GenreDto(1L, "Жанр 1"), new GenreDto(2L, "Жанр 2"));
+        List<AuthorDto> authors = List.of(new AuthorDto(1L, "Автор 1"), new AuthorDto(2L, "Автор 2"));
 
         when(bookService.findById(bookId)).thenReturn(bookDto);
+        when(bookMapper.toBookUpdateDto(bookDto)).thenReturn(bookUpdateDto);
         when(commentService.findByBookId(bookId)).thenReturn(comments);
         when(genreService.findAll()).thenReturn(genres);
         when(authorService.findAll()).thenReturn(authors);
@@ -145,8 +142,34 @@ class BookControllerTest {
                 .andExpect(model().attributeExists("book"))
                 .andExpect(model().attributeExists("comments"))
                 .andExpect(model().attributeExists("allGenres"))
-                .andExpect(model().attributeExists("allAuthors"));
+                .andExpect(model().attributeExists("allAuthors"))
+                .andExpect(model().attribute("book", bookUpdateDto))
+                .andExpect(model().attribute("allGenres", genres))
+                .andExpect(model().attribute("allAuthors", authors))
+                .andExpect(model().attribute("comments", comments));
+
+        verify(bookService).findById(bookId);
+        verify(bookMapper).toBookUpdateDto(bookDto);
+        verify(commentService).findByBookId(bookId);
     }
+
+    @Test
+    @DisplayName("GET /books/{id}/edit - не должен перезаписывать book из flash-атрибутов")
+    void editBook_WhenBookInFlashAttributes_ShouldNotOverwrite() throws Exception {
+        // given
+        Long bookId = 1L;
+        BookUpdateDto existingBookDto = new BookUpdateDto(bookId, "Existing Book", 1L, List.of(1L));
+
+        // when & then
+        mockMvc.perform(get("/books/{id}/edit", bookId)
+                        .flashAttr("book", existingBookDto))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("book", existingBookDto));
+
+        verify(bookService, never()).findById(bookId);
+        verify(bookMapper, never()).toBookUpdateDto(any());
+    }
+
 
     @Test
     @DisplayName("POST /books/{id}/update - должен обновить книгу и остаться")
@@ -221,7 +244,7 @@ class BookControllerTest {
     }
 
     @Test
-    @DisplayName("GET /books/{id} с несуществующим ID - должен вернуть страницу ошибки")
+    @DisplayName("GET /books/{id} с несуществующим ID - должен вернуть страницу ошибки и код 404")
     void getBook_WhenNotExists_ShouldReturnErrorPage() throws Exception {
         // given
         long nonExistentId = 999L;
@@ -236,7 +259,7 @@ class BookControllerTest {
 
         // when & then
         mockMvc.perform(get("/books/{id}", nonExistentId))
-                .andExpect(status().isOk())
+                .andExpect(status().isNotFound())
                 .andExpect(view().name("customError"))
                 .andExpect(model().attributeExists("errorText"))
                 .andExpect(model().attribute("errorText", expectedErrorText));
