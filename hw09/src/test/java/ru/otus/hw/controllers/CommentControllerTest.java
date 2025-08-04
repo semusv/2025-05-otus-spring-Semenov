@@ -45,7 +45,7 @@ class CommentControllerTest {
         mockMvc.perform(post("/books/{id}/comments/add", bookId)
                         .flashAttr("comment", commentDto))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/books/" + bookId + "/display#comments-section"));
+                .andExpect(redirectedUrl("/books/" + bookId + "#comments-section"));
 
         verify(commentService, times(1)).insert(any(CommentDto.class));
     }

@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title th:text="${book.id != 0} ? #{page.title.edit} + ' ' + ${book.title} : #{page.title.new-book}"></title>
+    <title th:text="${book.id != null} ? #{page.title.edit} + ' ' + ${book.title} : #{page.title.new-book}"></title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,41 +21,54 @@
                 <a th:href="@{/}" href="books-list.html" class="breadcrumb-link"
                     th:text="#{breadcrumb.home}">Главная</a>
                 <span class="breadcrumb-separator">/</span>
-                <span th:text="*{id != 0} ? #{breadcrumb.edit} : #{breadcrumb.new}" class="breadcrumb-current">Edit или
+                <span th:text="*{id != null} ? #{breadcrumb.edit} : #{breadcrumb.new}" class="breadcrumb-current">Edit
+                    или
                     New</span>
             </nav>
         </div>
 
         <!-- Заголовок и действия -->
         <header class="page-header">
-            <h1 th:text="*{id != 0} ? *{title} : #{book.header.new}">Название книги или NEW</h1>
+            <h1 th:text="*{id != null} ? *{title} : #{book.header.new}">Название книги или NEW</h1>
 
-            <div class="form-actions" th:if="*{id != 0}">
-                <a th:href="@{'/books/' + *{id} + '/display'}" href="book-view.html" class="btn btn-success"
+            <div class="form-actions" th:if="*{id != null}">
+                <a th:href="@{'/books/' + *{id}}" href="book-view.html" class="btn btn-success"
                     th:text="#{button.view}">
                     Просмотр
                 </a>
                 <form th:action="@{'/books/' + *{id} + '/delete'}" action="books-list.html" th:method="post"
-                    onsubmit="return confirm('#{confirm.delete}')">
+                    th:onsubmit="'return confirm(\'' + #{confirm.delete} + '\')'">
                     <button type="submit" class="btn btn-danger" th:text="#{button.delete}">
                         Удалить
                     </button>
                 </form>
-
-
             </div>
-
         </header>
 
         <!-- Основная форма -->
         <main class="edit-form-container">
-            <form th:action="*{id != 0} ? @{'/books/' + *{id} + '/update'} : @{/books/create}" action="books-list.html"
-                th:method="post">
+            <form th:action="*{id != null} ? @{'/books/' + *{id} + '/update'} : @{/books/create}"
+                action="books-list.html" th:method="post">
+
+                <!-- Общие ошибки формы -->
+                <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
+                    <ul>
+                        <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
+                    </ul>
+                </div>
+
+                <!-- Успешные сообщения -->
+                <div th:if="${successMessage}" class="alert alert-success">
+                    <span th:text="${successMessage}"></span>
+                </div>
+
+                <!-- Скрытое поле для id -->
                 <input type="hidden" th:value="*{id}" name="id">
 
                 <!-- Блок основной информации -->
                 <section class="form-section">
                     <h2 th:text="#{form.section.main-info}">Основная информация</h2>
+
                     <div class="form-group">
                         <label for="title" th:text="#{book.label.title}">Название книги</label>
                         <input type="text" id="title" th:field="*{title}" class="form-control" required>
@@ -95,7 +108,7 @@
                 <div class="form-actions">
                     <a th:if="*{id == 0}" th:href="@{/}" href="books-list.html" class="btn btn-secondary"
                         th:text="#{button.cancel}">Отмена</a>
-                    <button type="submit" th:text="*{id != 0} ? #{button.save} : #{button.add-book}"
+                    <button type="submit" th:text="*{id != null} ? #{button.save} : #{button.add-book}"
                         class="btn btn-primary">Сохранить/Добавить
                     </button>
                 </div>
@@ -103,7 +116,7 @@
         </main>
 
         <!-- Комментарии (только для существующих книг) -->
-        <section class="comments-section" th:if="*{id != 0}" id="comments-section">
+        <section class="comments-section" th:if="*{id != null}" id="comments-section">
             <h2 th:text="#{comments.header}">Комментарии</h2>
 
             <!-- Проверяем наличие сообщения -->

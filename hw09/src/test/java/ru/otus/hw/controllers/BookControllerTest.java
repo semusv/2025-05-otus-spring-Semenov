@@ -7,10 +7,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.hw.dto.AuthorDto;
+import ru.otus.hw.dto.BookCreateDto;
 import ru.otus.hw.dto.BookDto;
-import ru.otus.hw.dto.BookFormDto;
+import ru.otus.hw.dto.BookUpdateDto;
+import ru.otus.hw.dto.BookViewDto;
 import ru.otus.hw.dto.CommentDto;
 import ru.otus.hw.dto.GenreDto;
+import ru.otus.hw.mappers.BookMapper;
 import ru.otus.hw.services.AuthorService;
 import ru.otus.hw.services.BookService;
 import ru.otus.hw.services.CommentService;
@@ -59,6 +62,10 @@ class BookControllerTest {
     @Autowired
     private MessageSource messageSource;
 
+    @MockitoBean
+    @Autowired
+    private BookMapper bookMapper;
+
     @Test
     @DisplayName("GET /books - должен показать список всех книг")
     void getBooks_ShouldReturnBooksList() throws Exception {
@@ -80,7 +87,7 @@ class BookControllerTest {
     }
 
     @Test
-    @DisplayName("GET /books/{id}/display - должен показать книгу с комментариями")
+    @DisplayName("GET /books/{id} - должен показать книгу с комментариями")
     void getBook_ShouldReturnBookView() throws Exception {
         // given
         long bookId = 1L;
@@ -91,17 +98,27 @@ class BookControllerTest {
                 new CommentDto(2L, "Комментарий 2", bookId)
         );
 
+        BookViewDto bookViewDto = new BookViewDto(
+                bookId,
+                "Книга",
+                new AuthorDto(1L,
+                        "Автор"),
+                List.of(new GenreDto(1L, "Жанр")),
+                List.of(
+                        new CommentDto(1L, "Комментарий 1", bookId),
+                        new CommentDto(2L, "Комментарий 2", bookId)
+                ));
+
         when(bookService.findById(bookId)).thenReturn(bookDto);
         when(commentService.findByBookId(bookId)).thenReturn(comments);
+        when(bookMapper.toBookViewDto(bookDto,comments)).thenReturn(bookViewDto);
 
         // when & then
-        mockMvc.perform(get("/books/{id}/display", bookId))
+        mockMvc.perform(get("/books/{id}", bookId))
                 .andExpect(status().isOk())
                 .andExpect(view().name("book-view"))
                 .andExpect(model().attributeExists("book"))
-                .andExpect(model().attributeExists("comments"))
-                .andExpect(model().attribute("book", bookDto))
-                .andExpect(model().attribute("comments", comments));
+                .andExpect(model().attribute("book", bookViewDto));
     }
 
     @Test
@@ -132,17 +149,21 @@ class BookControllerTest {
     }
 
     @Test
-    @DisplayName("POST /books/{id}/update - должен обновить книгу и перенаправить")
+    @DisplayName("POST /books/{id}/update - должен обновить книгу и остаться")
     void updateBook_ShouldUpdateAndRedirect() throws Exception {
         // given
-        long bookId = 1L;
-        BookFormDto bookFormDto = new BookFormDto(bookId, "Новое название", 1L, List.of(1L));
+        Long bookId = 1L;
+        BookUpdateDto bookFormDto = new BookUpdateDto(
+                bookId,
+                "Новое название",
+                1L,
+                List.of(1L));
 
         // when & then
         mockMvc.perform(post("/books/{id}/update", bookId)
                         .flashAttr("book", bookFormDto))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/books/" + bookId + "/display"));
+                .andExpect(redirectedUrl("/books/" + bookId + "/edit"));
 
         verify(bookService, times(1)).update(bookFormDto);
     }
@@ -184,23 +205,23 @@ class BookControllerTest {
     @DisplayName("POST /books/create - должен создать книгу и перенаправить")
     void createBook_ShouldCreateAndRedirect() throws Exception {
         // given
-        BookFormDto bookFormDto = new BookFormDto(0L, "Новая книга", 1L, List.of(1L));
+        BookCreateDto bookFormDto = new BookCreateDto(0L, "Новая книга", 1L, List.of(1L));
         BookDto createdBook = new BookDto(1L, "Новая книга",
                 new AuthorDto(1L, "Автор"), List.of(new GenreDto(1L, "Жанр")));
 
-        when(bookService.insert(any(BookFormDto.class))).thenReturn(createdBook);
+        when(bookService.insert(any(BookCreateDto.class))).thenReturn(createdBook);
 
         // when & then
         mockMvc.perform(post("/books/create")
                         .flashAttr("book", bookFormDto))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/books/1/display"));
+                .andExpect(redirectedUrl("/books/1"));
 
-        verify(bookService, times(1)).insert(any(BookFormDto.class));
+        verify(bookService, times(1)).insert(any(BookCreateDto.class));
     }
 
     @Test
-    @DisplayName("GET /books/{id}/display с несуществующим ID - должен вернуть страницу ошибки")
+    @DisplayName("GET /books/{id} с несуществующим ID - должен вернуть страницу ошибки")
     void getBook_WhenNotExists_ShouldReturnErrorPage() throws Exception {
         // given
         long nonExistentId = 999L;
@@ -214,7 +235,7 @@ class BookControllerTest {
         ).thenReturn(expectedErrorText);
 
         // when & then
-        mockMvc.perform(get("/books/{id}/display", nonExistentId))
+        mockMvc.perform(get("/books/{id}", nonExistentId))
                 .andExpect(status().isOk())
                 .andExpect(view().name("customError"))
                 .andExpect(model().attributeExists("errorText"))

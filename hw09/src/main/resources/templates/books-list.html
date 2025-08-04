@@ -51,7 +51,7 @@
         <tbody th:each="book : ${books}">
         <tr>
             <td class="clickable-cell"
-                th:onclick="|window.location.href='@{/books/{id}/display(id=${book.id})}'|"
+                th:onclick="|window.location.href='@{/books/{id}(id=${book.id})}'|"
                 onclick="window.location='book-view.html';" tabindex="0"
                 th:onkeydown="|if (event.key === 'Enter') { window.location.href='@{/books/{id}(id=${book.id})}' }|"
                 onkeydown="if (event.key === 'Enter') { window.location='book-view.html' }">

@@ -3,8 +3,9 @@ package ru.otus.hw.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.otus.hw.dto.BookCreateDto;
 import ru.otus.hw.dto.BookDto;
-import ru.otus.hw.dto.BookFormDto;
+import ru.otus.hw.dto.BookUpdateDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.mappers.BookMapper;
 import ru.otus.hw.models.Author;
@@ -59,19 +60,19 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public BookDto insert(BookFormDto bookFormDto) {
+    public BookDto insert(BookCreateDto bookCreateDto) {
         var book = new Book();
-        prepareBook(bookFormDto.title(), bookFormDto.authorId(), bookFormDto.genreIds(), book);
+        prepareBook(bookCreateDto.title(), bookCreateDto.authorId(), bookCreateDto.genreIds(), book);
         return bookMapper.toBookDto(bookRepository.save(book));
     }
 
     @Override
     @Transactional
-    public BookDto update(BookFormDto bookFormDto) {
-        Book book = bookRepository.findById(bookFormDto.id()).orElseThrow(
-                () -> new EntityNotFoundException("Book with id %d not found".formatted(bookFormDto.id()))
+    public BookDto update(BookUpdateDto bookUpdateDto) {
+        Book book = bookRepository.findById(bookUpdateDto.id()).orElseThrow(
+                () -> new EntityNotFoundException("Book with id %d not found".formatted(bookUpdateDto.id()))
         );
-        prepareBook(bookFormDto.title(), bookFormDto.authorId(), bookFormDto.genreIds(), book);
+        prepareBook(bookUpdateDto.title(), bookUpdateDto.authorId(), bookUpdateDto.genreIds(), book);
         return bookMapper.toBookDto(bookRepository.save(book));
     }
 
