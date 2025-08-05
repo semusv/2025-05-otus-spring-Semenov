@@ -12,7 +12,7 @@ import java.util.List;
  */
 @Builder
 public record BookCreateDto(
-        @NotNull(message = "{validation.book.id.notnull}")
+
         Long id,
 
         @NotBlank(message = "{validation.book.title.not-blank}")
