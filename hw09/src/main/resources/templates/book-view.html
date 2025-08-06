@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <title th:text="${book.title} + ' | ' + #{page.title.library}"></title>
+    <meta name="description" th:content="#{book.description.prefix} + ' ' + ${book.title}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Playfair+Display:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet" href="../static/css/style.css">
+</head>
+
+<body>
+
+
+    <div class="container book-view-container" th:object="${book}">
+        <div class="header-row">
+            <!-- Хлебные крошки -->
+            <nav class="breadcrumbs">
+                <a th:href="@{/}" href="books-list.html" class="breadcrumb-link"
+                    th:text="#{breadcrumb.home}">Главная</a>
+                <span class="breadcrumb-separator">/</span>
+                <span th:text="*{title}" class="breadcrumb-current">Название книги</span>
+            </nav>
+        </div>
+
+        <!-- Заголовок и действия -->
+        <header class="page-header">
+            <h1 th:text="*{title}">Название книги</h1>
+
+            <div class="action-buttons">
+                <a th:href="@{'/books/' + *{id} + '/edit'}" href="book-edit.html" class="btn btn-primary"
+                    th:text="#{button.edit}">
+                    Редактировать
+                </a>
+            </div>
+        </header>
+
+        <!-- Основная информация о книге -->
+        <main class="book-details">
+            <div class="book-meta">
+                <div class="meta-item">
+                    <span class="meta-label" th:text="#{book.label.author}">Автор:</span>
+                    <span class="meta-value" th:text="*{author.fullName}">Автор книги</span>
+                </div>
+
+                <div class="meta-item">
+                    <span class="meta-label" th:text="#{book.label.genres}">Жанры:</span>
+                    <div class="genres-list">
+                        <span th:each="genre : *{genres}" class="genre-badge" th:text="${genre.name}">Жанр
+                            книги</span>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <!-- Блок комментариев -->
+            <section class="comments-section" id="comments-section">
+                <h2 th:text="#{comments.header}">Комментарии</h2>
+
+                <!-- Общие ошибки формы -->
+                <div th:if="${not #lists.isEmpty(errorMessages)}" class="alert alert-danger">
+                    <ul>
+                        <li th:each="err : ${errorMessages}" th:text="${err}"></li>
+                    </ul>
+                </div>
+
+                <!-- Успешные сообщения -->
+                <div th:if="${successMessage}" class="alert alert-success">
+                    <span th:text="${successMessage}"></span>
+                </div>
+
+                <!-- Форма добавления комментария -->
+                <form th:action="@{'/books/' + *{id} + '/comments/add'}" action="book-view.html" th:method="post"
+                    class="comment-form">
+                    <div class="form-group">
+                        <label for="new-comment" th:placeholder="#{comments.label.new}">Новый комментарий</label>
+                        <textarea id="new-comment" name="text" th:placeholder="#{comments.placeholder}"
+                            required></textarea>
+                        <input type="hidden" name="bookId" th:value="*{id}">
+                    </div>
+                    <button type="submit" class="btn btn-primary" th:text="#{button.add-comment}">Добавить комментарий
+                    </button>
+                </form>
+
+                <!-- Список комментариев -->
+                <div class="comments-list">
+                    <div class="comment-item" th:each="comment : *{comments}">
+                        <div class="comment-header">
+                            <span class="comment-id" th:text="#{comments.id} + ' #' + ${comment.id}">Комментарий
+                                #1</span>
+                        </div>
+                        <div class="comment-text" th:text="${comment.text}">Текст комментария</div>
+                    </div>
+
+                    <div class="empty-state" th:if="*{#lists.isEmpty(comments)}" th:text="#{comments.empty}">
+                        Пока нет комментариев. Будьте первым!
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+
+</html>

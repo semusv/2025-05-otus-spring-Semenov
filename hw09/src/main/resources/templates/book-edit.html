@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <title th:text="${book.id != null} ? #{page.title.edit} + ' ' + ${book.title} : #{page.title.new-book}"></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Playfair+Display:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet" href="../static/css/style.css">
+</head>
+
+<body>
+    <div class="container book-edit-container" th:object="${book}">
+        <div class="header-row">
+            <!-- Хлебные крошки -->
+            <nav class="breadcrumbs">
+                <a th:href="@{/}" href="books-list.html" class="breadcrumb-link"
+                    th:text="#{breadcrumb.home}">Главная</a>
+                <span class="breadcrumb-separator">/</span>
+                <span th:text="*{id != null} ? #{breadcrumb.edit} : #{breadcrumb.new}" class="breadcrumb-current">Edit
+                    или
+                    New</span>
+            </nav>
+        </div>
+
+        <!-- Заголовок и действия -->
+        <header class="page-header">
+            <h1 th:text="*{id != null} ? *{title} : #{book.header.new}">Название книги или NEW</h1>
+
+            <div class="form-actions" th:if="*{id != null}">
+                <a th:href="@{'/books/' + *{id}}" href="book-view.html" class="btn btn-success"
+                    th:text="#{button.view}">
+                    Просмотр
+                </a>
+                <form th:action="@{'/books/' + *{id} + '/delete'}" action="books-list.html" th:method="post"
+                    th:onsubmit="'return confirm(\'' + #{confirm.delete} + '\')'">
+                    <button type="submit" class="btn btn-danger" th:text="#{button.delete}">
+                        Удалить
+                    </button>
+                </form>
+            </div>
+        </header>
+
+        <!-- Основная форма -->
+        <main class="edit-form-container">
+            <form th:action="*{id != null} ? @{'/books/' + *{id} + '/update'} : @{/books/create}"
+                action="books-list.html" th:method="post">
+
+                <!-- Общие ошибки формы -->
+                <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
+                    <ul>
+                        <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
+                    </ul>
+                </div>
+
+                <!-- Успешные сообщения -->
+                <div th:if="${successMessage}" class="alert alert-success">
+                    <span th:text="${successMessage}"></span>
+                </div>
+
+                <!-- Скрытое поле для id -->
+                <input type="hidden" th:value="*{id}" name="id">
+
+                <!-- Блок основной информации -->
+                <section class="form-section">
+                    <h2 th:text="#{form.section.main-info}">Основная информация</h2>
+
+                    <div class="form-group">
+                        <label for="title" th:text="#{book.label.title}">Название книги</label>
+                        <input type="text" id="title" th:field="*{title}" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="author" th:text="#{book.label.author}">Автор</label>
+                        <select id="author" th:field="*{authorId}" class="form-control" required>
+                            <option th:each="author : ${allAuthors}" th:value="${author.id}"
+                                th:text="${author.fullName}" th:selected="${book.authorId == author.id}">какой-то Автор
+                            </option>
+                        </select>
+                        <div class="form-hint" th:text="#{form.hint.author}">Выберите одного автора из выпадающего
+                            списка
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Блок жанров -->
+                <section class="form-section">
+                    <h2 th:text="#{book.label.genres}">Жанры</h2>
+                    <div class="form-group">
+                        <label for="genres" th:text="#{form.label.select-genres}">Выберите жанры</label>
+                        <select id="genres" th:field="*{genreIds}" multiple class="form-control select-multiple"
+                            required>
+                            <option th:each="genre : ${allGenres}" th:value="${genre.id}" th:text="${genre.name}"
+                                th:selected="${#lists.contains(book.genreIds, genre.id)}">Жанр 1
+                            </option>
+                        </select>
+                        <div class="form-hint" th:text="#{form.hint.genres}">Для выбора нескольких жанров удерживайте
+                            Ctrl (Cmd на Mac)
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Кнопки отправки -->
+                <div class="form-actions">
+                    <a th:if="*{id == 0}" th:href="@{/}" href="books-list.html" class="btn btn-secondary"
+                        th:text="#{button.cancel}">Отмена</a>
+                    <button type="submit" th:text="*{id != null} ? #{button.save} : #{button.add-book}"
+                        class="btn btn-primary">Сохранить/Добавить
+                    </button>
+                </div>
+            </form>
+        </main>
+
+        <!-- Комментарии (только для существующих книг) -->
+        <section class="comments-section" th:if="*{id != null}" id="comments-section">
+            <h2 th:text="#{comments.header}">Комментарии</h2>
+
+            <!-- Проверяем наличие сообщения -->
+            <div th:if="${message}" class="alert alert-success" role="alert">
+                <span th:text="${message}"></span>
+                <button type="button" class="close" onclick="this.parentElement.remove()"
+                    th:attr="aria-label=#{button.close}">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="comments-list">
+                <div class="comment-card" th:each="comment : ${comments}">
+                    <div class="comment-header">
+                        <span class="comment-id" th:text="#{comments.id} + ' #' + ${comment.id}">Комментарий #1</span>
+                        <form th:action="@{'/books/' + *{id} + '/comments/' + ${comment.id} + '/delete'}"
+                            th:method="post">
+                            <button type="submit" class="btn-icon btn-icon-delete"
+                                th:attr="aria-label=#{button.delete-comment}"
+                                th:onclick="'return confirm(\'' + #{confirm.delete-comment} + '\')'">
+                                ✖
+                            </button>
+                        </form>
+                    </div>
+                    <div class="comment-text" th:text="${comment.text}">Это просто какой-то комменатрий</div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+
+</html>
