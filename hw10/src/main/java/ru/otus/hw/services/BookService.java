@@ -1,8 +1,8 @@
 package ru.otus.hw.services;
 
-import ru.otus.hw.controllers.api.dto.BookCreateDto;
+import ru.otus.hw.dto.api.BookCreateDto;
 import ru.otus.hw.dto.BookDto;
-import ru.otus.hw.controllers.api.dto.BookUpdateDto;
+import ru.otus.hw.dto.api.BookUpdateDto;
 
 import java.util.List;
 

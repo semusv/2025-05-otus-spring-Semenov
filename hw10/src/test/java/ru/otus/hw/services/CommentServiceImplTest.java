@@ -1,6 +1,5 @@
 package ru.otus.hw.services;
 
-import jakarta.validation.ValidationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +8,6 @@ import org.springframework.context.annotation.Import;
 import ru.otus.hw.dto.CommentDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.mappers.CommentMapperImpl;
-import ru.otus.hw.services.validators.CommentValidatorImpl;
 
 import java.util.List;
 
@@ -19,7 +17,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 @DisplayName("Сервис для работы с комментариями")
 @DataJpaTest
 @Import({CommentServiceImpl.class,
-        CommentValidatorImpl.class,
+
         CommentMapperImpl.class})
 class CommentServiceImplTest {
 
@@ -110,26 +108,6 @@ class CommentServiceImplTest {
         CommentDto updatedComment = commentService.findById(commentId);
         assertThat(updatedComment).isNotNull();
         assertThat(updatedComment.text()).isEqualTo(updatedText);
-    }
-
-    @Test
-    @DisplayName("должен выбрасывать исключение при создании комментария с пустым текстом")
-    void shouldThrowForEmptyTextWhenInsert() {
-        CommentDto commentDto = new CommentDto(0L, "", 1L);
-
-        assertThatThrownBy(() -> commentService.insert(commentDto))
-                .isInstanceOf(ValidationException.class)
-                .hasMessage("Text cannot be empty");
-    }
-
-    @Test
-    @DisplayName("должен выбрасывать исключение при обновлении с пустым текстом")
-    void shouldThrowForEmptyTextWhenUpdate() {
-        CommentDto commentDto = new CommentDto(1L, "", 1L);
-
-        assertThatThrownBy(() -> commentService.update(commentDto))
-                .isInstanceOf(ValidationException.class)
-                .hasMessage("Text cannot be empty");
     }
 
     @Test

@@ -22,8 +22,8 @@ export async function addComment(commendData) {
     });
     return await handleApiResponse(response);
 }
-export async function deleteComment(commentId) {
-    const response = await fetch(`/api/comments/${commentId}`, {
+export async function deleteComment(commentId, bookId) {
+    const response = await fetch(`/api/books/${bookId}/comments/${commentId}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json'

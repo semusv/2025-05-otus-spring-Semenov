@@ -4,7 +4,11 @@ import { fetchAuthors } from "../modules/api/authors-api.js";
 import { fetchGenres } from "../modules/api/genres-api.js";
 import { fetchBook, addBook, saveBook, deleteBook } from "../modules/api/books-api.js";
 import { deleteComment, fetchCommentsByBookId } from "../modules/api/comments-api.js";
-import { showErrorMessage, getBookIdFromUrl, showSuccessMessage, delayLoader } from "../modules/utils.js";
+import {
+    showErrorMessage, getBookIdFromUrl,
+    showSuccessMessage, delayLoader,
+    getLocaleMessage
+} from "../modules/utils.js";
 
 
 async function initPage() {
@@ -40,7 +44,7 @@ async function initPage() {
         updateProgress(100);
     } catch (error) {
         console.error('Error init page while getting data:', error);
-        const errorMsg = document.getElementById('i18n-messages').dataset.loadData;
+        const errorMsg = getLocaleMessage("loadData");
         showErrorMessage(errorMsg);
     } finally {
         hideLoader();
@@ -63,12 +67,13 @@ function hideLoader() {
 function renderBook(book) {
     document.getElementById('page-title').textContent =
         book == null
-            ? document.getElementById('i18n-messages').dataset.pageTitleNewBook
-            : book.title + ' | ' + document.getElementById('i18n-messages').dataset.pageTitleEdit;
+            ? getLocaleMessage("pageTitleNewBook")
+            : book.title + ' | ' + getLocaleMessage("pageTitleEdit");
     document.getElementById('breadcrumb-current').textContent =
         book == null
-            ? document.getElementById('i18n-messages').dataset.breadcrumbNew
-            : document.getElementById('i18n-messages').dataset.breadcrumbEdit;
+            ? getLocaleMessage("breadcrumbNew")
+            : getLocaleMessage("breadcrumbEdit");
+
 
     document.getElementById('book-header-title').textContent =
         book == null
@@ -83,10 +88,10 @@ function renderBook(book) {
         setSelectedAuthor(book.author)
         setSelectedGenres(book.genres)
         document.getElementById('cancel-button').style.display = 'none';
-        saveButton.textContent = document.getElementById('i18n-messages').dataset.buttonSave;
+        saveButton.textContent = getLocaleMessage("buttonSave");
     } else {
         document.getElementById('book-navigation-buttons').style.display = 'none';
-        saveButton.textContent = document.getElementById('i18n-messages').dataset.buttonAdd;
+        saveButton.textContent = getLocaleMessage("buttonAdd");
     }
 }
 
@@ -225,9 +230,9 @@ async function handleAddBook(event) {
     };
 
     try {
-        const result = await addBook(bookDto);
-        showSuccessMessage(result.message);
-        window.location.href = '/books/' + result.data.id;
+        const newBook = await addBook(bookDto);
+        showSuccessMessage(getLocaleMessage("apiResponseOkSaveBook", newBook.id));
+        window.location.href = '/books/' + newBook.id;
     }
     catch (error) {
         console.error('Failed insert book:', error);
@@ -264,8 +269,8 @@ async function handleSaveBook(event) {
     };
 
     try {
-        const result = await saveBook(bookUpdateDto);
-        showSuccessMessage(result.message);
+        const updatedBook = await saveBook(bookUpdateDto);
+        showSuccessMessage(getLocaleMessage("apiResponseOkSaveBook", updatedBook.id));
     } catch (error) {
         console.error('Failed save book:', error);
 
@@ -283,16 +288,14 @@ async function handleDeleteBook(event) {
     event.preventDefault();
 
     const bookId = document.getElementById('book-id').value;
-
-    const confirmMsg = document.getElementById('i18n-messages').dataset.confirmDelete;
+    const confirmMsg = getLocaleMessage("confirmDelete");
     if (!confirm(confirmMsg)) {
         return;
     }
 
     try {
-        const result = await deleteBook(bookId);
-        showSuccessMessage(result.message);
-
+        const deletedId = await deleteBook(bookId);
+        showSuccessMessage(getLocaleMessage("apiResponseOkDeleteBook", deletedId));
         window.location.href = '/';
     }
     catch (error) {
@@ -307,19 +310,20 @@ async function handleDeleteBook(event) {
     }
 }
 async function handleDeleteComment(event) {
-    const confirmMsg = document.getElementById('i18n-messages').dataset.confirmDeleteComment;
+    const confirmMsg = getLocaleMessage("confirmDeleteComment")
 
     const button = event.target;
     const commentItem = button.closest('.comment-item');
     const commentId = commentItem.dataset.commentId;
+    const bookId = document.getElementById('book-id').value;
 
     if (!confirm(confirmMsg)) {
         return;
     }
     try {
-        const result = await deleteComment(commentId);
+        const deletedId = await deleteComment(commentId, bookId);
         commentItem.remove();
-        showSuccessMessage(result.message);
+        showSuccessMessage(getLocaleMessage("apiResponseOkDeleteComment", deletedId));
     } catch (error) {
         console.error('Failed delete comment:', error);
         if (error.type === 'VALIDATION_FAILED') {

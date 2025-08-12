@@ -23,11 +23,12 @@ import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.formatters.ErrorMessageFormatter;
 import ru.otus.hw.services.AuthorService;
 import ru.otus.hw.services.BookService;
-import ru.otus.hw.controllers.api.dto.BookCreateDto;
-import ru.otus.hw.controllers.api.dto.BookUpdateDto;
+import ru.otus.hw.dto.api.BookCreateDto;
+import ru.otus.hw.dto.api.BookUpdateDto;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -143,7 +144,7 @@ class BooksControllerTest {
     void shouldCreateAndReturnApiResponse() throws Exception {
         //given
         BookCreateDto formDto = new BookCreateDto(
-                0L, "Новая книга", 1L, List.of(1L));
+                0L, "Новая книга", 1L, Set.of(1L));
         BookDto created = new BookDto(
                 99L,
                 formDto.title(),
@@ -163,12 +164,10 @@ class BooksControllerTest {
                         .content(mapper.writeValueAsString(formDto)))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message", equalTo("Book saved")))
-                .andExpect(jsonPath("$.success", Matchers.is(true)))
-                .andExpect(jsonPath("$.data.id", Matchers.is(created.id().intValue())))
-                .andExpect(jsonPath("$.data.title", Matchers.is(created.title())))
-                .andExpect(jsonPath("$.data.author.id", Matchers.is(created.author().id().intValue())))
-                .andExpect(jsonPath("$.data.genres[0].id", Matchers.is(created.genres().get(0).id().intValue())));
+                .andExpect(jsonPath("$.id", Matchers.is(created.id().intValue())))
+                .andExpect(jsonPath("$.title", Matchers.is(created.title())))
+                .andExpect(jsonPath("$.author.id", Matchers.is(created.author().id().intValue())))
+                .andExpect(jsonPath("$.genres[0].id", Matchers.is(created.genres().get(0).id().intValue())));
 
         verify(bookService, times(1)).insert(formDto);
     }
@@ -183,7 +182,7 @@ class BooksControllerTest {
                 id,
                 "Обновлённая книга",
                 2L,
-                List.of(3L, 4L)
+                Set.of(3L, 4L)
         );
         BookDto updated = new BookDto(
                 id,
@@ -207,12 +206,10 @@ class BooksControllerTest {
                         .content(mapper.writeValueAsString(updateDto)))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message", equalTo("Book updated")))
-                .andExpect(jsonPath("$.success", Matchers.is(true)))
-                .andExpect(jsonPath("$.data.id", Matchers.is(updated.id().intValue())))
-                .andExpect(jsonPath("$.data.title", Matchers.is(updated.title())))
-                .andExpect(jsonPath("$.data.author.id", Matchers.is(updated.author().id().intValue())))
-                .andExpect(jsonPath("$.data.genres", hasSize(updated.genres().size())));
+                .andExpect(jsonPath("$.id", Matchers.is(updated.id().intValue())))
+                .andExpect(jsonPath("$.title", Matchers.is(updated.title())))
+                .andExpect(jsonPath("$.author.id", Matchers.is(updated.author().id().intValue())))
+                .andExpect(jsonPath("$.genres", hasSize(updated.genres().size())));
 
         verify(bookService, times(1)).update(updateDto);
     }
@@ -235,9 +232,7 @@ class BooksControllerTest {
         mockMvc.perform(delete("/api/books/{id}", id))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message", equalTo("Book deleted")))
-                .andExpect(jsonPath("$.success", Matchers.is(true)))
-                .andExpect(jsonPath("$.data").doesNotExist());
+                .andExpect(content().json(mapper.writeValueAsString(id)));
 
         verify(bookService, times(1)).deleteById(id);
     }

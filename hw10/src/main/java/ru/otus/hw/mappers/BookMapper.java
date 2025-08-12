@@ -5,12 +5,14 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
 import ru.otus.hw.dto.BookDto;
-import ru.otus.hw.controllers.api.dto.BookUpdateDto;
-import ru.otus.hw.controllers.api.dto.BookViewDto;
-import ru.otus.hw.dto.CommentDto;
+import ru.otus.hw.dto.GenreDto;
+import ru.otus.hw.dto.api.BookUpdateDto;
 import ru.otus.hw.models.Book;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE,
         componentModel = MappingConstants.ComponentModel.SPRING,
@@ -18,15 +20,15 @@ import java.util.List;
 public interface BookMapper {
     BookDto toBookDto(Book book);
 
-    @Mapping(target = "comments", source = "book.comments")
-    BookViewDto toBookViewDto(Book book);
-
-    @Mapping(target = "comments", source = "commentDtos")
-    BookViewDto toBookViewDto(BookDto bookDto,
-                              List<CommentDto> commentDtos);
-
     // BookDto в BookUpdateDto
     @Mapping(target = "authorId", source = "bookDto.author.id")
-    @Mapping(target = "genreIds", expression = "java(bookDto.genres().stream().map(GenreDto::id).toList())")
+    @Mapping(target = "genreIds", source = "bookDto.genres")
     BookUpdateDto toBookUpdateDto(BookDto bookDto);
+
+    default Set<Long> mapGenres(List<GenreDto> genres) {
+        if (genres == null) {
+            return Collections.emptySet();
+        }
+        return genres.stream().map(GenreDto::id).collect(Collectors.toSet());
+    }
 }

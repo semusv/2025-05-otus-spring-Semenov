@@ -7,7 +7,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.eq;
@@ -112,11 +111,10 @@ class CommentsControllerTest {
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(newComment)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message", equalTo("Comment saved")))
-                .andExpect(jsonPath("$.data.id", is(savedComment.id().intValue())))
-                .andExpect(jsonPath("$.data.text", is(savedComment.text())))
-                .andExpect(jsonPath("$.data.bookId", is(savedComment.bookId().intValue())))
-                .andExpect(jsonPath("$.success", is(true)))
+
+                .andExpect(jsonPath("$.id", is(savedComment.id().intValue())))
+                .andExpect(jsonPath("$.text", is(savedComment.text())))
+                .andExpect(jsonPath("$.bookId", is(savedComment.bookId().intValue())))
                 .andDo(print());
     }
 
@@ -137,9 +135,7 @@ class CommentsControllerTest {
         mockMvc.perform(delete("/api/books/{id}/comments/{commentId}",
                         bookId, commentId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message", equalTo("Comment deleted")))
-                .andExpect(jsonPath("$.data").doesNotExist())
-                .andExpect(jsonPath("$.success", is(true)))
+                .andExpect(content().json(mapper.writeValueAsString(commentId)))
                 .andDo(print());
         verify(commentService, times(1)).deleteById(commentId);
     }

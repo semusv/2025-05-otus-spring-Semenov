@@ -3,7 +3,10 @@ document.addEventListener('DOMContentLoaded', initPage);
 
 import { fetchBook } from "../modules/api/books-api.js";
 import { fetchCommentsByBookId, addComment } from "../modules/api/comments-api.js";
-import { showErrorMessage, getBookIdFromUrl, showSuccessMessage, delayLoader } from "../modules/utils.js";
+import {
+    showErrorMessage, showSuccessMessage, getBookIdFromUrl,
+    delayLoader, getLocaleMessage
+} from "../modules/utils.js";
 
 async function initPage() {
     try {
@@ -36,10 +39,10 @@ async function initPage() {
     }
 }
 
-
 function updateProgress(percent) {
     document.getElementById('progress').style.width = percent + '%';
 }
+
 function hideLoader() {
     const loader = document.getElementById('loader');
     loader.style.opacity = '0';
@@ -48,7 +51,6 @@ function hideLoader() {
         document.getElementById('content').style.display = 'block';
     }, 300);
 }
-
 
 function renderBook(book) {
     document.getElementById('page-title').textContent = `${book.title} | ${document.getElementById('page-title').textContent}`;
@@ -127,11 +129,9 @@ async function handleAddComment(event) {
     };
 
     try {
-        const result = await addComment(commentDto);
+        const newComment = await addComment(commentDto);
+        showSuccessMessage(getLocaleMessage("apiResponseOkSaveComment", newComment.id));
 
-        showSuccessMessage(result.message);
-
-        const newComment = result.data;
         renderNextCommentElement(newComment);
         commentForm.reset();
 

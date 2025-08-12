@@ -10,7 +10,7 @@ import ru.otus.hw.models.Book;
 import ru.otus.hw.models.Comment;
 import ru.otus.hw.repositories.BookRepository;
 import ru.otus.hw.repositories.CommentRepository;
-import ru.otus.hw.services.validators.CommentValidator;
+
 
 import java.util.List;
 
@@ -25,8 +25,6 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
 
     private final BookRepository bookRepository;
-
-    private final CommentValidator commentValidator;
 
     @Override
     @Transactional(readOnly = true)
@@ -66,7 +64,6 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public CommentDto insert(CommentDto commentDto) {
         var comment = new Comment();
-        commentValidator.validateText(commentDto.text());
         comment.setText(commentDto.text());
         var book = getBookById(commentDto.bookId());
         comment.setBook(book);
@@ -83,7 +80,6 @@ public class CommentServiceImpl implements CommentService {
                                 "exception.entity.not.found.comment",
                                 commentDto.id())
                 );
-        commentValidator.validateText(commentDto.text());
         comment.setText(commentDto.text());
         return commentDtoConverter.toCommentDto(commentRepository.save(comment));
     }

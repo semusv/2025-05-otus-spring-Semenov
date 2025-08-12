@@ -3,9 +3,9 @@ package ru.otus.hw.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.otus.hw.controllers.api.dto.BookCreateDto;
+import ru.otus.hw.dto.api.BookCreateDto;
 import ru.otus.hw.dto.BookDto;
-import ru.otus.hw.controllers.api.dto.BookUpdateDto;
+import ru.otus.hw.dto.api.BookUpdateDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.mappers.BookMapper;
 import ru.otus.hw.models.Author;
@@ -14,7 +14,6 @@ import ru.otus.hw.models.Genre;
 import ru.otus.hw.repositories.AuthorRepository;
 import ru.otus.hw.repositories.BookRepository;
 import ru.otus.hw.repositories.GenreRepository;
-import ru.otus.hw.services.validators.BookValidator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,8 +31,6 @@ public class BookServiceImpl implements BookService {
     private final AuthorRepository authorRepository;
 
     private final GenreRepository genreRepository;
-
-    private final BookValidator bookValidator;
 
     @Override
     @Transactional(readOnly = true)
@@ -84,12 +81,10 @@ public class BookServiceImpl implements BookService {
         return bookMapper.toBookDto(bookRepository.save(book));
     }
 
-    private void prepareBook(String title, long authorId, List<Long> genreIds, Book book) {
+    private void prepareBook(String title, long authorId, Set<Long> genreIds, Book book) {
         book.setTitle(title);
-        bookValidator.validateTitle(book.getTitle());
         book.setAuthor(getAuthorById(authorId));
         book.setGenres(getGenresByIds(genreIds));
-        bookValidator.validateGenres(book.getGenres());
     }
 
     private Author getAuthorById(long id) throws EntityNotFoundException {
@@ -102,7 +97,7 @@ public class BookServiceImpl implements BookService {
                 );
     }
 
-    private List<Genre> getGenresByIds(List<Long> ids) throws EntityNotFoundException {
+    private List<Genre> getGenresByIds(Set<Long> ids) throws EntityNotFoundException {
 
         List<Genre> genres = genreRepository.findAllById(ids);
         Set<Long> foundIds = genres.stream().map(Genre::getId).collect(Collectors.toSet());

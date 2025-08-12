@@ -8,162 +8,130 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-            href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Playfair+Display:wght@400;500&display=swap"
-            rel="stylesheet">
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Playfair+Display:wght@400;500&display=swap"
+        rel="stylesheet">
     <link th:href="@{/css/style.css}" rel="stylesheet" href="../static/css/style.css">
-
-    <style>
-        #loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            background: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        #progress-bar {
-            width: 300px;
-            height: 20px;
-            background-color: #f0f0f0;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        #progress {
-            height: 100%;
-            width: 0%;
-            background-color: #4CAF50;
-            transition: width 0.3s;
-        }
-
-        #content {
-            display: none;
-            /* Скрываем контент до загрузки */
-        }
-    </style>
 
 </head>
 
 <body>
-<div id="loader">
-    <div id="progress-bar">
-        <div id="progress"></div>
-    </div>
-</div>
-
-<div id="content" class="container book-edit-container">
-    <div class="header-row">
-        <!-- Хлебные крошки -->
-        <nav class="breadcrumbs">
-            <a th:href="@{/}" href="books-list.html" class="breadcrumb-link"
-               th:text="#{breadcrumb.home}">Главная</a>
-            <span class="breadcrumb-separator">/</span>
-            <span id="breadcrumb-current" class="breadcrumb-current">Edit или New</span>
-        </nav>
+    <div id="loader">
+        <div id="progress-bar">
+            <div id="progress"></div>
+        </div>
     </div>
 
-    <!-- Заголовок и действия -->
-    <header class="page-header">
-        <h1 id="book-header-title" th:text="#{book.header.new}">Заголовок</h1>
+    <div id="content" class="container book-edit-container">
+        <div class="header-row">
+            <!-- Хлебные крошки -->
+            <nav class="breadcrumbs">
+                <a th:href="@{/}" href="books-list.html" class="breadcrumb-link"
+                    th:text="#{breadcrumb.home}">Главная</a>
+                <span class="breadcrumb-separator">/</span>
+                <span id="breadcrumb-current" class="breadcrumb-current">Edit или New</span>
+            </nav>
+        </div>
 
-        <div class="form-actions" id="book-navigation-buttons">
-            <a id="view-button" class="btn btn-success" th:href="book-view.html"
-               th:text="#{button.view}">Просмотр</a>
-            <button id="delete-button" class="btn btn-danger" type="button" th:text="#{button.delete}">Удалить
+        <!-- Заголовок и действия -->
+        <header class="page-header">
+            <h1 id="book-header-title" th:text="#{book.header.new}">Заголовок</h1>
+
+            <div class="form-actions" id="book-navigation-buttons">
+                <a id="view-button" class="btn btn-success" th:href="book-view.html"
+                    th:text="#{button.view}">Просмотр</a>
+                <button id="delete-button" class="btn btn-danger" type="button" th:text="#{button.delete}">Удалить
                 </button>
-        </div>
-    </header>
+            </div>
+        </header>
 
-    <!-- Основная форма -->
-    <main class="edit-form-container">
-        <form id="book-form" action="books-list.html">
-            <!-- Блок основной информации -->
-            <section class="form-section">
-                <h2 th:text="#{form.section.main-info}">Основная информация</h2>
-                <input id="book-id" type="hidden" name="id">
-                <div class="form-group">
-                    <label for="book-title" th:text="#{book.label.title}">Название книги</label>
-                    <input type="text" id="book-title" name="title" class="form-control" placeholder="..." required>
-                </div>
-
-                <div class="form-group">
-                    <label for="authors-list" th:text="#{book.label.author}">Автор</label>
-                    <select id="authors-list" name="authorId" class="form-control" required>
-                        <option>какой-то Автор
-                        </option>
-                    </select>
-
-                    <div class="form-hint" th:text="#{form.hint.author}">Выберите одного автора из
-                        выпадающего
-                        списка
+        <!-- Основная форма -->
+        <main class="edit-form-container">
+            <form id="book-form" action="books-list.html">
+                <!-- Блок основной информации -->
+                <section class="form-section">
+                    <h2 th:text="#{form.section.main-info}">Основная информация</h2>
+                    <input id="book-id" type="hidden" name="id">
+                    <div class="form-group">
+                        <label for="book-title" th:text="#{book.label.title}">Название книги</label>
+                        <input type="text" id="book-title" name="title" class="form-control" placeholder="..." required>
                     </div>
-                </div>
-            </section>
 
-            <!-- Блок жанров -->
-            <section class="form-section">
-                <h2 th:text="#{book.label.genres}">Жанры</h2>
-                <div class="form-group">
-                    <label for="genres-list" th:text="#{form.label.select-genres}">Выберите жанры</label>
-                    <select id="genres-list" name="genresIds" multiple class="form-control select-multiple"
+                    <div class="form-group">
+                        <label for="authors-list" th:text="#{book.label.author}">Автор</label>
+                        <select id="authors-list" name="authorId" class="form-control" required>
+                            <option>какой-то Автор
+                            </option>
+                        </select>
+
+                        <div class="form-hint" th:text="#{form.hint.author}">Выберите одного автора из
+                            выпадающего
+                            списка
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Блок жанров -->
+                <section class="form-section">
+                    <h2 th:text="#{book.label.genres}">Жанры</h2>
+                    <div class="form-group">
+                        <label for="genres-list" th:text="#{form.label.select-genres}">Выберите жанры</label>
+                        <select id="genres-list" name="genresIds" multiple class="form-control select-multiple"
                             required>
-                        <option>Жанр какой-то</option>
-                    </select>
-                    <div class="form-hint" th:text="#{form.hint.genres}">Для выбора нескольких жанров
-                        удерживайте
-                        Ctrl (Cmd на Mac)
+                            <option>Жанр какой-то</option>
+                        </select>
+                        <div class="form-hint" th:text="#{form.hint.genres}">Для выбора нескольких жанров
+                            удерживайте
+                            Ctrl (Cmd на Mac)
+                        </div>
                     </div>
+                </section>
+
+                <!-- Кнопки отправки -->
+                <div class="form-actions">
+                    <a id="cancel-button" th:href="@{/}" href="books-list.html" class="btn btn-secondary"
+                        th:text="#{button.cancel}">Отмена</a>
+                    <button id="save-button" type="button" class="btn btn-primary">Сохранить/Добавить</button>
                 </div>
-            </section>
+            </form>
+        </main>
 
-            <!-- Кнопки отправки -->
-            <div class="form-actions">
-                <a id="cancel-button" th:href="@{/}" href="books-list.html" class="btn btn-secondary"
-                   th:text="#{button.cancel}">Отмена</a>
-                <button id="save-button" type="button" class="btn btn-primary">Сохранить/Добавить</button>
-            </div>
-        </form>
-    </main>
-
-    <!-- Комментарии (только для существующих книг) -->
-    <section class="comments-section" id="comments-section">
-        <h2 th:text="#{comments.header}">Комментарии</h2>
-        <div class="comments-list" id="comments-list">
-            <div class="comment-item" id="comment-item">
-                <div class="comment-header">
-                    <span class="comment-id">Комментарий #1</span>
-                    <form>
-                        <button type="submit" class="btn-icon btn-icon-delete"
+        <!-- Комментарии (только для существующих книг) -->
+        <section class="comments-section" id="comments-section">
+            <h2 th:text="#{comments.header}">Комментарии</h2>
+            <div class="comments-list" id="comments-list">
+                <div class="comment-item" id="comment-item">
+                    <div class="comment-header">
+                        <span class="comment-id">Комментарий #1</span>
+                        <form>
+                            <button type="submit" class="btn-icon btn-icon-delete"
                                 onclick="return confirm('#{confirm.delete-comment}')">
-                            ✖
-                        </button>
-                    </form>
+                                ✖
+                            </button>
+                        </form>
+                    </div>
+                    <div class="comment-text">Это просто какой-то комментарий</div>
                 </div>
-                <div class="comment-text">Это просто какой-то комментарий</div>
             </div>
+        </section>
+
+        <div class="notification-container" id="notification-container"></div>
+
+
+        <div id="i18n-messages" th:data-load-data="#{error.load.data}" th:data-add-comment="#{error.add.comment}"
+            th:data-load-authors="#{error.load.authors}" th:data-load-genres="#{error.load.genres}"
+            th:data-page-title-edit=" #{page.title.edit}" th:data-page-title-new-book="#{page.title.new-book}"
+            th:data-breadcrumb-edit="#{breadcrumb.edit}" th:data-breadcrumb-new="#{breadcrumb.new}"
+            th:data-button-save="#{button.save}" th:data-button-add="#{button.add-book}"
+            th:data-confirm-delete-comment="#{confirm.delete-comment}"
+            th:data-comments-success-deleted="#{comments.success.deleted}"
+            th:data-comments-error-deleted="#{comments.error.deleted}" th:data-confirm-delete="#{confirm.delete}"
+            th:data-api-response-ok-save-book="#{api.response.ok.save.book}"
+            th:data-api-response-ok-delete-book="#{api.response.ok.delete.book}"
+            th:data-api-response-ok-delete-comment="#{api.response.ok.delete.comment}">
         </div>
-    </section>
 
-    <div class="notification-container" id="notification-container"></div>
-
-
-    <div id="i18n-messages" th:data-load-data="#{error.load.data}" th:data-add-comment="#{error.add.comment}"
-         th:data-load-authors="#{error.load.authors}" th:data-load-genres="#{error.load.genres}"
-         th:data-page-title-edit=" #{page.title.edit}" th:data-page-title-new-book="#{page.title.new-book}"
-         th:data-breadcrumb-edit="#{breadcrumb.edit}" th:data-breadcrumb-new="#{breadcrumb.new}"
-         th:data-button-save="#{button.save}" th:data-button-add="#{button.add-book}"
-         th:data-confirm-delete-comment="#{confirm.delete-comment}"
-         th:data-comments-success-deleted="#{comments.success.deleted}"
-         th:data-comments-error-deleted="#{comments.error.deleted}" th:data-confirm-delete="#{confirm.delete}">
     </div>
-
-</div>
-<script type="module" src="../static/js/ui/book-edit.js" th:src="@{/js/ui/book-edit.js}"></script>
+    <script type="module" src="../static/js/ui/book-edit.js" th:src="@{/js/ui/book-edit.js}"></script>
 </body>
 
 </html>

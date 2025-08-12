@@ -1,22 +1,21 @@
 package ru.otus.hw.services;
 
-import jakarta.validation.ValidationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
-import ru.otus.hw.controllers.api.dto.BookCreateDto;
+import ru.otus.hw.dto.api.BookCreateDto;
 import ru.otus.hw.dto.BookDto;
-import ru.otus.hw.controllers.api.dto.BookUpdateDto;
+import ru.otus.hw.dto.api.BookUpdateDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.mappers.AuthorMapperImpl;
 import ru.otus.hw.mappers.BookMapperImpl;
 import ru.otus.hw.mappers.CommentMapperImpl;
 import ru.otus.hw.mappers.GenreMapperImpl;
-import ru.otus.hw.services.validators.BookValidatorImpl;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -26,7 +25,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 @Import({
         BookServiceImpl.class,
         BookMapperImpl.class,
-        BookValidatorImpl.class,
         AuthorMapperImpl.class,
         GenreMapperImpl.class,
         CommentMapperImpl.class
@@ -91,7 +89,7 @@ class BookServiceImplTest {
         long bookId = 1L;
         String updatedTitle = "Updated Title";
         long authorId = 1L;
-        List<Long> genresIds = List.of(1L, 2L);
+        Set<Long> genresIds = Set.of(1L, 2L);
 
         BookUpdateDto bookUpdateDto = BookUpdateDto.builder()
                 .id(bookId)
@@ -112,7 +110,7 @@ class BookServiceImplTest {
     void shouldCreateNewBook() {
         String title = "New Book Title";
         long authorId = 1L;
-        List<Long> genresIds = List.of(1L, 2L);
+        Set<Long> genresIds = Set.of(1L, 2L);
 
         BookCreateDto bookCreateDto = BookCreateDto.builder()
                 .title(title)
@@ -127,31 +125,7 @@ class BookServiceImplTest {
         assertThat(result.genres()).hasSize(2);
     }
 
-    @Test
-    @DisplayName("должен выбрасывать исключение при создании книги с пустым названием")
-    void shouldThrowWhenCreateBookWithEmptyTitle() {
-        BookCreateDto bookCreateDto = BookCreateDto.builder()
-                .title("")
-                .authorId(1L)
-                .genreIds(List.of(1L)).build();
 
-        assertThatThrownBy(() -> bookService.insert(bookCreateDto))
-                .isInstanceOf(ValidationException.class)
-                .hasMessageContaining("Title cannot be empty");
-    }
-
-    @Test
-    @DisplayName("должен выбрасывать исключение при создании книги без жанров")
-    void shouldThrowWhenCreateBookWithoutGenres() {
-        BookCreateDto bookCreateDto = BookCreateDto.builder()
-                .title("Title")
-                .authorId(1L)
-                .genreIds(List.of()).build();
-
-        assertThatThrownBy(() -> bookService.insert(bookCreateDto))
-                .isInstanceOf(ValidationException.class)
-                .hasMessageContaining("Genres cannot be empty");
-    }
 
     @Test
     @DisplayName("должен выбрасывать исключение при создании книги с несуществующим автором")
@@ -159,7 +133,7 @@ class BookServiceImplTest {
         BookCreateDto bookCreateDto = BookCreateDto.builder()
                 .title("Title")
                 .authorId(999L)
-                .genreIds(List.of(1L)).build();
+                .genreIds(Set.of(1L)).build();
 
         assertThatThrownBy(() -> bookService.insert(bookCreateDto))
                 .isInstanceOf(EntityNotFoundException.class)
@@ -172,40 +146,15 @@ class BookServiceImplTest {
         BookCreateDto bookCreateDto = BookCreateDto.builder()
                 .title("Title")
                 .authorId(1L)
-                .genreIds(List.of(999L)).build();
+                .genreIds(Set.of(999L)).build();
 
         assertThatThrownBy(() -> bookService.insert(bookCreateDto))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining("Genres not found: [999]");
     }
 
-    @Test
-    @DisplayName("должен выбрасывать исключение при обновлении книги с пустым названием")
-    void shouldThrowWhenUpdateBookWithEmptyTitle() {
-        BookUpdateDto bookUpdateDto = BookUpdateDto.builder()
-                .id(1L)
-                .title("")
-                .authorId(1L)
-                .genreIds(List.of(1L)).build();
 
-        assertThatThrownBy(() -> bookService.update(bookUpdateDto))
-                .isInstanceOf(ValidationException.class)
-                .hasMessageContaining("Title cannot be empty");
-    }
 
-    @Test
-    @DisplayName("должен выбрасывать исключение при обновлении книги без жанров")
-    void shouldThrowWhenUpdateBookWithoutGenres() {
-        BookUpdateDto bookUpdateDto = BookUpdateDto.builder()
-                .id(1L)
-                .title("Title")
-                .authorId(1L)
-                .genreIds(List.of()).build();
-
-        assertThatThrownBy(() -> bookService.update(bookUpdateDto))
-                .isInstanceOf(ValidationException.class)
-                .hasMessageContaining("Genres cannot be empty");
-    }
 
     @Test
     @DisplayName("должен выбрасывать исключение при обновлении книги с несуществующим автором")
@@ -214,7 +163,7 @@ class BookServiceImplTest {
                 .id(1L)
                 .title("Title")
                 .authorId(999L)
-                .genreIds(List.of(1L)).build();
+                .genreIds(Set.of(1L)).build();
 
         assertThatThrownBy(() -> bookService.update(bookUpdateDto))
                 .isInstanceOf(EntityNotFoundException.class)
@@ -228,7 +177,7 @@ class BookServiceImplTest {
                 .id(1L)
                 .title("Title")
                 .authorId(1L)
-                .genreIds(List.of(999L)).build();
+                .genreIds(Set.of(999L)).build();
 
         assertThatThrownBy(() -> bookService.update(bookUpdateDto))
                 .isInstanceOf(EntityNotFoundException.class)
