@@ -13,12 +13,10 @@ export async function handleApiResponse(response) {
         return await response.json();
     }
 
-
-     const errorData = await response.json();
-
+    const errorData = await response.json();
 
     // Валидационные ошибки
-    if (errorData.errorType === 'VALIDATION_FAILED') {
+    if (errorData.status === 400) {
         throw new ApiError(
             errorData.message || 'Validation failed',
             errorData.errorType,
@@ -91,18 +89,18 @@ export function getLocaleMessage(messageKey, ...args) {
     try {
         const messages = document.getElementById('i18n-messages').dataset;
         let message = messages[messageKey];
-        
+
         if (message === undefined) {
             console.warn(`Message key "${messageKey}" not found`);
             return messageKey;
         }
-        
+
         // Заменяем подстановки {0}, {1} и т.д. на соответствующие аргументы
         args.forEach((arg, index) => {
             const placeholder = `{${index}}`;
             message = message.replace(new RegExp(escapeRegExp(placeholder), 'g'), arg);
         });
-        
+
         return message;
     } catch (error) {
         console.error('Error parsing messages:', error);

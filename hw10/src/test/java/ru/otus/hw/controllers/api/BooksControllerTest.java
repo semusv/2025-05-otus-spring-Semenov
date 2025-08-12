@@ -9,8 +9,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 
 import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -20,6 +18,7 @@ import ru.otus.hw.controllers.handlers.GlobalExceptionHandler;
 import ru.otus.hw.controllers.handlers.GlobalResponseEntityExceptionHandler;
 import ru.otus.hw.controllers.handlers.ValidationExceptionHandler;
 import ru.otus.hw.dto.BookDto;
+import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.formatters.ErrorMessageFormatter;
 import ru.otus.hw.services.AuthorService;
 import ru.otus.hw.services.BookService;
@@ -30,6 +29,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -89,11 +90,9 @@ class BooksControllerTest {
     private MessageSource messageSource;
 
     @MockitoBean
-    private ValidationExceptionHandler validationExceptionHandler;
-
-    @MockitoBean
     @Autowired
     private ErrorMessageFormatter errorMessageFormatter;
+
 
     @Test
     @DisplayName("GET /api/books - возвращает список всех книг")
@@ -140,8 +139,8 @@ class BooksControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/books - создаёт книгу и возвращает ApiResponseDto")
-    void shouldCreateAndReturnApiResponse() throws Exception {
+    @DisplayName("POST /api/books - создаёт книгу и возвращает ResponseDto")
+    void shouldCreateAndReturnResponse() throws Exception {
         //given
         BookCreateDto formDto = new BookCreateDto(
                 0L, "Новая книга", 1L, Set.of(1L));
@@ -174,8 +173,8 @@ class BooksControllerTest {
 
 
     @Test
-    @DisplayName("PUT /api/books/{id} - обновляет книгу и возвращает ApiResponseDto")
-    void shouldUpdateAndReturnApiResponse() throws Exception {
+    @DisplayName("PUT /api/books/{id} - обновляет книгу и возвращает ResponseDto")
+    void shouldUpdateAndReturnResponse() throws Exception {
         //given
         long id = 10L;
         BookUpdateDto updateDto = new BookUpdateDto(
@@ -216,8 +215,8 @@ class BooksControllerTest {
 
 
     @Test
-    @DisplayName("DELETE /api/books/{id} - удаляет книгу и возвращает ApiResponseDto")
-    void shouldDeleteAndReturnApiResponse() throws Exception {
+    @DisplayName("DELETE /api/books/{id} - удаляет книгу и возвращает ResponseDto")
+    void shouldDeleteAndReturnResponse() throws Exception {
         //given
         long id = 55L;
 
@@ -236,4 +235,62 @@ class BooksControllerTest {
 
         verify(bookService, times(1)).deleteById(id);
     }
+
+
+    @Test
+    @DisplayName("POST /api/books - возвращает 400, когда пустые поля")
+    void shouldReturnResponse400WhenEmptyFields() throws Exception {
+        //given
+        BookCreateDto formDto = new BookCreateDto(
+                0L, "Новая книга", null, Set.of(1L));
+        //then
+        mockMvc.perform(post(API_URL)
+                        .contentType(APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(formDto)))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    @DisplayName("GET /api/books/{id} - возвращает 404, когда некорректный ID книги")
+    void shouldReturnResponse404WhenWrongBookId() throws Exception {
+        //given
+        long bookId = 999L;
+
+        //when
+        when(bookService.findById(bookId))
+                .thenThrow(new EntityNotFoundException(
+                        "Book with id %d not found".formatted(bookId),
+                        "exception.entity.not.found.book",
+                        bookId));
+
+        when(messageSource.getMessage(
+                any( String.class),
+                any(Object[].class),
+                any(String.class),
+                any(Locale.class)))
+                .thenReturn("Not Found Book with ID");
+
+        //then
+        mockMvc.perform(get("/api/books/{id}", bookId)
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("POST /api/books - возвращает 500, когда некорректный путь")
+    void shouldReturnResponse500WhenWrongUrl() throws Exception {
+        //given
+        BookCreateDto formDto = new BookCreateDto(
+                0L, "Новая книга", 1L, Set.of(1L));
+        //then
+        mockMvc.perform(post("/api/wrongUrl")
+                        .contentType(APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(formDto)))
+                .andExpect(status().isInternalServerError())
+                .andDo(print());
+    }
+
 }

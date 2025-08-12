@@ -138,7 +138,7 @@ async function handleAddComment(event) {
     } catch (error) {
         console.error('Failed add comment:', error);
 
-        if (error.type === 'VALIDATION_FAILED') {
+        if (error.status === 400) {
             error.errors.forEach(error => {
                 showErrorMessage(error.message);
             });

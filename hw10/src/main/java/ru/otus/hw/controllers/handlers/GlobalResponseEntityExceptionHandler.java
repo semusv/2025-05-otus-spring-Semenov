@@ -94,9 +94,12 @@ public class GlobalResponseEntityExceptionHandler extends ResponseEntityExceptio
             String messageCode,
             Object... args) {
 
-        String errorText = messageSource.getMessage(messageCode, args,
+        String errorText = messageSource.getMessage(
+                messageCode,
+                args,
                 "Server Error",
-                LocaleContextHolder.getLocale());
+                LocaleContextHolder.getLocale()
+        );
 
         logErrorDetails(ex, request, errorText);
 

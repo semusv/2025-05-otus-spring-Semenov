@@ -236,7 +236,7 @@ async function handleAddBook(event) {
     }
     catch (error) {
         console.error('Failed insert book:', error);
-        if (error.type === 'VALIDATION_FAILED') {
+        if (error.status === 400) {
             error.errors.forEach(error => {
                 showErrorMessage(error.message);
             });
@@ -274,7 +274,7 @@ async function handleSaveBook(event) {
     } catch (error) {
         console.error('Failed save book:', error);
 
-        if (error.type === 'VALIDATION_FAILED') {
+        if (error.status === 400) {
             error.errors.forEach(error => {
                 showErrorMessage(error.message);
             });
@@ -300,7 +300,7 @@ async function handleDeleteBook(event) {
     }
     catch (error) {
         console.error('Failed delete book:', error);
-        if (error.type === 'VALIDATION_FAILED') {
+        if (error.status === 400) {
             error.errors.forEach(error => {
                 showErrorMessage(error.message);
             });
@@ -326,7 +326,7 @@ async function handleDeleteComment(event) {
         showSuccessMessage(getLocaleMessage("apiResponseOkDeleteComment", deletedId));
     } catch (error) {
         console.error('Failed delete comment:', error);
-        if (error.type === 'VALIDATION_FAILED') {
+        if (error.status === 400) {
             error.errors.forEach(error => {
                 showErrorMessage(error.message);
             });
