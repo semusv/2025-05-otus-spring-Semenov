@@ -1,0 +1,43 @@
+spring:
+  #  test:
+  #    mockmvc:
+  #      enabled: false  # Отключаем MockMvc в тестах
+
+  r2dbc:
+    url: r2dbc:h2:mem:///maindb?options=DB_CLOSE_DELAY=-1
+    username: sa
+    password: ""
+    pool:
+      enabled: true
+  jpa:
+    enabled: false  # Отключаем JPA полностью
+
+  datasource:
+    url: jdbc:h2:mem:maindb;DB_CLOSE_DELAY=-1  # Для Liquibase (блокирующий доступ)
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+
+  liquibase:
+    enabled: true
+    contexts: test
+    #    change-log: classpath:/db/changelog/db.changelog-master.yaml
+    url: ${spring.datasource.url}
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+#  main:
+#    web-application-type: reactive
+
+# Включение логирования SQL-запросов
+logging:
+  level:
+    org:
+      springframework:
+        r2dbc: DEBUG
+    io:
+      r2dbc:
+        h2: DEBUG

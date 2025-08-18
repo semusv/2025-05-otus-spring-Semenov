@@ -1,0 +1,72 @@
+server:
+  error:
+    whitelabel:
+      enabled: false
+    path: "/error"
+
+
+spring:
+  r2dbc:
+    url: r2dbc:h2:mem:///maindb?options=DB_CLOSE_DELAY=-1
+    username: sa
+    password: ""
+    pool:
+      enabled: true
+  jpa:
+    enabled: false  # Отключаем JPA полностью
+
+  datasource:
+    url: jdbc:h2:mem:maindb;DB_CLOSE_DELAY=-1  # Для Liquibase (блокирующий доступ)
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+
+  liquibase:
+    enabled: true
+    contexts: dev
+    #    change-log: classpath:/db/changelog/db.changelog-master.yaml
+    url: ${spring.datasource.url}
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
+  thymeleaf:
+    cache: false
+    mode: HTML
+  messages:
+    baseName: messages
+    encoding: UTF-8
+    # Не дает свалиться в системную локаль если не найден файл для переданной в MessageSource
+    # Если false то будут браться сообщения из дефолтного файла, если true, то из файла соответствующего системной локали
+    fallbackToSystemLocale: false
+  output:
+    ansi:
+      enabled: ALWAYS
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  mvc:
+    throw-exception-if-no-handler-found: true
+  main:
+    web-application-type: reactive
+
+app:
+  templates:
+    error: "static/error-template.txt"
+
+
+
+# Включение логирования SQL-запросов
+logging:
+  level:
+    org:
+      springframework:
+        r2dbc: DEBUG
+    io:
+      r2dbc:
+        h2: DEBUG

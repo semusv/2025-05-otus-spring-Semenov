@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<!--suppress ALL -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title th:text="#{page.title.authors-list}">Список авторов</title>
+    <meta name="description" content>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link th:href="@{/css/style.css}" rel="stylesheet" href="../static/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+            href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Playfair+Display:wght@400;500&display=swap"
+            rel="stylesheet">
+</head>
+
+<body>
+<div class="container">
+    <div class="header-row">
+        <!-- Хлебные крошки -->
+        <nav class="breadcrumbs">
+            <a th:href="@{/}" href="books-list.html" class="breadcrumb-link"
+               th:text="#{breadcrumb.home}">Главная</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current" th:text="#{page.title.authors-list}">Список авторов</span>
+        </nav>
+    </div>
+
+    <h1 th:text="#{page.title.authors-list}">Список авторов</h1>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th th:text="#{table.header.id}">ID</th>
+            <th th:text="#{authors.table.header.name}">Полное имя</th>
+        </tr>
+        </thead>
+        <tbody id="authors-table-body"></tbody>
+
+    </table>
+</div>
+
+<div class="notification-container" id="notification-container"></div>
+
+<script type="module" src="../static/js/ui/authors-list.js" th:src="@{/js/ui/authors-list.js}"></script>
+</body>
+
+</html>

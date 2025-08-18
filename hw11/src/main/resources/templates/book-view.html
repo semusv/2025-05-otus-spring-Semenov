@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<!--suppress ALL -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <title id="page-title" th:text="#{page.title.library}">Library</title>
+    <meta id="meta-description" name="description" th:content="#{book.description.prefix}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+            href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Playfair+Display:wght@400;500&display=swap"
+            rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet" href="../static/css/style.css">
+</head>
+
+<body>
+<div id="loader">
+    <div id="progress-bar">
+        <div id="progress"></div>
+    </div>
+</div>
+
+<div id="content" class="container book-view-container">
+    <div class="header-row">
+        <!-- Хлебные крошки -->
+        <nav class="breadcrumbs">
+            <a th:href="@{/}" href="books-list.html" class="breadcrumb-link"
+               th:text="#{breadcrumb.home}">Главная</a>
+            <span class="breadcrumb-separator">/</span>
+            <span id="breadcrumb-current" class="breadcrumb-current">Название книги</span>
+        </nav>
+    </div>
+
+    <!-- Заголовок и действия -->
+    <header class="page-header">
+        <h1 id="book-title">Название книги</h1>
+
+        <div class="action-buttons">
+            <a id="edit-button" href="book-edit.html" class="btn btn-primary" th:text="#{button.edit}">
+                Редактировать
+            </a>
+        </div>
+    </header>
+
+    <!-- Основная информация о книге -->
+    <main class="book-details">
+        <div class="book-meta">
+            <input type="hidden" name="bookId" id="book-id">
+            <div class="meta-item">
+                <span class="meta-label" th:text="#{book.label.author}">Автор:</span>
+                <span id="book-author" class="meta-value">Автор книги</span>
+            </div>
+
+            <div class="meta-item">
+                <span class="meta-label" th:text="#{book.label.genres}">Жанры:</span>
+                <div class="genres-list" id="genres-list">
+                    <span class="genre-badge">Жанр_книги</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Блок комментариев -->
+        <section class="comments-section" id="comments-section">
+            <h2 th:text="#{comments.header}">Комментарии</h2>
+
+            <!-- Форма добавления комментария -->
+            <form class="comment-form" id="comment-form">
+                <div class="form-group">
+                    <label for="new-comment" th:placeholder="#{comments.label.new}">Новый комментарий</label>
+                    <textarea id="new-comment" name="text" th:placeholder="#{comments.placeholder}"
+                              required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" th:text="#{button.add-comment}">Добавить комментарий
+                </button>
+            </form>
+
+
+            <!-- Список комментариев -->
+            <div class="comments-list" id="comments-list">
+                <div class="comment-item">
+                    <div class="comment-header">
+                        <span class="comment-id">Комментарий #1</span>
+                    </div>
+                    <div class="comment-text">Текст комментария</div>
+                </div>
+
+                <div id="comments-empty" class="empty-state" th:text="#{comments.empty}">
+                    Пока нет комментариев. Будьте первым!
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<div class="notification-container" id="notification-container"></div>
+
+<div id="i18n-messages" style="display: none;" th:data-load-data="#{error.load.data}"
+     th:data-add-comment="#{error.add.comment}"
+     th:data-api-response-ok-save-comment="#{api.response.ok.save.comment}">
+</div>
+
+<script type="module" src="../static/js/ui/book-view.js" th:src="@{/js/ui/book-view.js}"></script>
+</body>
+
+</html>
