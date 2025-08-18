@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <title th:text="#{error.page.title}">Ошибка</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Подключаем Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+            href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Playfair+Display:wght@400;500&display=swap"
+            rel="stylesheet">
+
+    <link th:href="@{/css/style.css}" rel="stylesheet" href="../static/css/style.css">
+
+</head>
+
+<body>
+<div class="container">
+    <!-- Хлебные крошки -->
+    <nav class="breadcrumbs">
+        <a th:href="@{/}" href="books-list.html" class="breadcrumb-link" th:text="#{breadcrumb.home}">Главная</a>
+        <span class="breadcrumb-separator">/</span>
+        <span class="breadcrumb-current" th:text="#{error.page.title}">Ошибка</span>
+    </nav>
+
+    <div class="error-container">
+        <div class="error-header">
+            <h1 th:text="#{error.header}">Произошла непредвиденная ошибка</h1>
+        </div>
+
+        <div class="error-content" th:text="${errorText}">
+            Подробное описание ошибки...
+        </div>
+
+        <div class="error-actions">
+            <a th:href="@{/}" href="books-list.html" class="btn btn-primary" th:text="#{error.button.home}">
+                Вернуться на главную
+            </a>
+            <button onclick="history.back()" class="btn btn-outline" th:text="#{error.button.back}">
+                Назад
+            </button>
+        </div>
+    </div>
+
+</div>
+</body>
+
+</html>
