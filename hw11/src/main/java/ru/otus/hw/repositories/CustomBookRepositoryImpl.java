@@ -123,19 +123,16 @@ public class CustomBookRepositoryImpl implements CustomBookRepository {
             return null;
         }
         Book book = new Book();
-
         book.setId(row.get("id", Long.class));
         book.setTitle(row.get("title", String.class));
         book.setGenres(new ArrayList<>());
         // другие поля книги
-
         if (row.get("a_id", Long.class) != null) {
             Author author = new Author();
             author.setId(row.get("a_id", Long.class));
             author.setFullName(row.get("a_name", String.class));
             book.setAuthor(author);
         }
-
         if (row.get("g_id", Long.class) != null) {
             Genre genre = new Genre();
             genre.setId(row.get("g_id", Long.class));
