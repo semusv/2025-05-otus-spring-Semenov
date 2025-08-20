@@ -60,7 +60,6 @@ public class BookServiceImpl implements BookService {
     public Mono<BookDto> insert(BookCreateDto bookCreateDto) {
         return validateGenresExists(bookCreateDto.genreIds())
                 .then(validateAuthorExists(bookCreateDto.authorId()))
-                .then(validateGenresExists(bookCreateDto.genreIds()))
                 .then(Mono.defer(() -> {
                     Book book = bookMapper.toBook(bookCreateDto);
                     return bookRepository.saveBookWithGenres(book);

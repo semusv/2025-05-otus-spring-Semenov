@@ -73,8 +73,10 @@ public class CustomBookRepositoryImpl implements CustomBookRepository {
     public Mono<Book> saveBookWithGenres(Book book) {
         boolean isNew = book.getId() == 0;
         Mono<Long> bookOperation = isNew ? insertBook(book) : updateBook(book);
+
         return bookOperation.flatMap(bookId -> {
             book.setId(bookId);
+
             Mono<Void> deleteOldGenres = isNew ? Mono.empty()
                     : template.getDatabaseClient()
                     .sql("DELETE FROM books_genres WHERE book_id = :bookId")
@@ -82,6 +84,7 @@ public class CustomBookRepositoryImpl implements CustomBookRepository {
                     .fetch()
                     .rowsUpdated()
                     .then();
+
             Mono<Void> insertGenres = book.getGenres() == null || book.getGenres().isEmpty() ? Mono.empty()
                     : Flux.fromIterable(book.getGenres())
                     .flatMap(genre -> template.getDatabaseClient()
@@ -91,8 +94,9 @@ public class CustomBookRepositoryImpl implements CustomBookRepository {
                             .fetch()
                             .rowsUpdated()
                     ).then();
+
             return deleteOldGenres.then(insertGenres).thenReturn(book);
-        }).flatMap(savedBook -> findById(savedBook.getId()));
+        });
     }
 
     private Mono<Long> insertBook(Book book) {
