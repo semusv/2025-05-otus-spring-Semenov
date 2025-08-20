@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -31,44 +32,32 @@ public class BooksController {
     }
 
     @GetMapping("/api/books/{id}")
-    public Mono<ResponseEntity<BookDto>> getBook(
+    @ResponseStatus(HttpStatus.OK)
+    public Mono<BookDto> getBook(
             @PathVariable("id") Long id) {
-        return bookService.findById(id)
-                .map(book -> ResponseEntity
-                        .status(HttpStatus.OK)
-                        .body(book));
-
+        return bookService.findById(id);
     }
 
     @PostMapping("/api/books")
-    public Mono<ResponseEntity<BookDto>> insertBook(
+    @ResponseStatus(HttpStatus.CREATED)
+    public Mono<BookDto> insertBook(
             @Valid @RequestBody BookCreateDto bookCreateDto) {
-        return bookService.insert(bookCreateDto)
-                .map(savedBook -> ResponseEntity
-                        .status(HttpStatus.CREATED)
-                        .body(savedBook));
+        return bookService.insert(bookCreateDto);
     }
 
 
     @PutMapping("api/books/{id}")
-    public Mono<ResponseEntity<BookDto>> updateBook(
+    @ResponseStatus(HttpStatus.OK)
+    public Mono<BookDto> updateBook(
             @PathVariable("id") Long id,
             @Valid @RequestBody BookUpdateDto bookUpdateDto) {
-
-        return bookService.update(bookUpdateDto)
-                .map(savedBook -> ResponseEntity
-                        .status(HttpStatus.OK)
-                        .body(savedBook));
-
+        return bookService.update(bookUpdateDto);
     }
 
     @DeleteMapping("/api/books/{id}")
-    public Mono<ResponseEntity<Long>> deleteBook(
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public Mono<Void> deleteBook(
             @PathVariable("id") Long id) {
-
-        return bookService.deleteById(id)
-                .map(idDel -> ResponseEntity
-                        .status(HttpStatus.CREATED)
-                        .body(idDel));
+       return bookService.deleteById(id);
     }
 }

@@ -23,18 +23,18 @@ public class GlobalExceptionHandler {
     private final ErrorMessageFormatter errorMessageFormatter;
 
     @ExceptionHandler(Exception.class)
-    public Mono<Rendering> handleAllExceptions(Exception ex, ServerWebExchange exchange) {
+    public Rendering handleAllExceptions(Exception ex, ServerWebExchange exchange) {
         String errorText = messageSource.getMessage("error.internal.server", null,
                 LocaleContextHolder.getLocale());
 
         logErrorDetails(ex, exchange.getRequest(), errorText);
 
-        return Mono.just(Rendering.view("customError")
+        return Rendering.view("customError")
                 .modelAttribute("errorText", errorText)
                 .modelAttribute("requestId", exchange.getRequest().getId())
                 .modelAttribute("exception", ex)
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .build());
+                .build();
     }
 
     private void logErrorDetails(Exception ex, ServerHttpRequest request, String errorText) {

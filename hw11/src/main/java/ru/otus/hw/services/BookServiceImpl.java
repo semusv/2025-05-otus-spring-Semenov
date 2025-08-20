@@ -51,8 +51,8 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public Mono<Long> deleteById(long id) {
-        return bookRepository.deleteById(id).then(Mono.just(id));
+    public Mono<Void> deleteById(long id) {
+       return bookRepository.deleteById(id);
     }
 
     @Override

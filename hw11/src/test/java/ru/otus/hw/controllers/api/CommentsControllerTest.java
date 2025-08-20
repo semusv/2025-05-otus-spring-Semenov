@@ -124,10 +124,7 @@ class CommentsControllerTest {
         webTestClient.delete()
                 .uri("/api/books/{id}/comments/{commentId}", bookId, commentId)
                 .exchange()
-                .expectStatus().isOk()
-                .expectHeader().contentType(APPLICATION_JSON)
-                .expectBody(Long.class)
-                .isEqualTo(commentId);
+                .expectStatus().isNoContent();
 
         verify(commentService, times(1)).deleteById(commentId);
     }

@@ -195,15 +195,12 @@ class BooksControllerTest {
                 any(Object[].class), any(Locale.class)))
                 .thenReturn("Book deleted");
 
-        when(bookService.deleteById(id)).thenReturn(Mono.just(id));
+        when(bookService.deleteById(id)).thenReturn(Mono.empty());
 
         webTestClient.delete()
                 .uri("/api/books/{id}", id)
                 .exchange()
-                .expectStatus().isCreated()
-                .expectHeader().contentType(APPLICATION_JSON)
-                .expectBody()
-                .json(mapper.writeValueAsString(id));
+                .expectStatus().isNoContent();
 
         verify(bookService, times(1)).deleteById(id);
     }

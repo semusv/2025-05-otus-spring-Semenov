@@ -13,26 +13,26 @@ import reactor.core.publisher.Mono;
 public class BooksPagesController {
 
     @GetMapping({"/", "/books"})
-    public Mono<String> getBooks() {
-        return Mono.just("books-list");
+    public String getBooks() {
+        return "books-list";
     }
 
     @GetMapping("/books/{id}")
-    public Mono<String> getBook(
+    public String getBook(
             @PathVariable("id") long id) {
-        return Mono.just("book-view");
+        return "book-view";
     }
 
     @GetMapping("/books/{id}/edit")
-    public Mono<String> editBook(
+    public String editBook(
             @PathVariable("id") Long id) {
-        return Mono.just("book-edit");
+        return "book-edit";
     }
 
 
     @GetMapping("/books/new")
-    public Mono<String> addBook(Model model) {
-        return Mono.just("book-edit");
+    public String addBook(Model model) {
+        return "book-edit";
     }
 
 

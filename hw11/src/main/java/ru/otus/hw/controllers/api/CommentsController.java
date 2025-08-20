@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -23,29 +24,25 @@ public class CommentsController {
     private final CommentService commentService;
 
     @GetMapping("/api/books/{id}/comments")
+    @ResponseStatus(HttpStatus.OK)
     public Flux<CommentDto> getCommentsForBookId(
             @PathVariable("id") Long bookId) {
         return commentService.findByBookId(bookId);
     }
 
     @PostMapping("api/books/{id}/comments")
-    public Mono<ResponseEntity<CommentDto>> addCommentToBook(
+    @ResponseStatus(HttpStatus.CREATED)
+    public Mono<CommentDto> addCommentToBook(
             @PathVariable("id") Long bookId,
             @Valid @RequestBody CommentDto requestDto) {
-
-        return commentService.insert(requestDto)
-                .map(savedComment -> ResponseEntity
-                        .status(HttpStatus.CREATED)
-                        .body(savedComment));
+        return commentService.insert(requestDto);
     }
 
     @DeleteMapping("api/books/{id}/comments/{commentId}")
-    public Mono<ResponseEntity<Long>> deleteCommentFromBook(
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public Mono<Void> deleteCommentFromBook(
             @PathVariable("id") Long id,
             @PathVariable("commentId") Long commentId) {
-
-        return commentService.deleteById(commentId)
-                .thenReturn(ResponseEntity.ok(commentId));
-
+       return commentService.deleteById(commentId);
     }
 }

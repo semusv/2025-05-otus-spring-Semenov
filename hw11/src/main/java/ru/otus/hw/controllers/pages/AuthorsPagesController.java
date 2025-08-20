@@ -3,7 +3,6 @@ package ru.otus.hw.controllers.pages;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import reactor.core.publisher.Mono;
 
 
 @SuppressWarnings("SameReturnValue")
@@ -12,9 +11,9 @@ import reactor.core.publisher.Mono;
 public class AuthorsPagesController {
 
     @GetMapping("/authors")
-    public Mono<String> getAll() {
+    public String getAll() {
 
-        return Mono.just("authors-list");
+        return "authors-list";
     }
 }
 
