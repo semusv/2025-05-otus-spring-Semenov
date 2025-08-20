@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.reactive.result.view.Rendering;
 import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Mono;
 import ru.otus.hw.formatters.ErrorMessageFormatter;
 
 @RequiredArgsConstructor

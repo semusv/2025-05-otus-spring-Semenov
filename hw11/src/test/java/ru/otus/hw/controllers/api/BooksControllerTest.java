@@ -189,7 +189,7 @@ class BooksControllerTest {
 
     @Test
     @DisplayName("DELETE /api/books/{id} - удаляет книгу и возвращает ResponseDto")
-    void shouldDeleteAndReturnResponse() throws Exception {
+    void shouldDeleteAndReturnResponse() {
         long id = 55L;
         when(messageSource.getMessage(eq("api.response.ok.delete.book"),
                 any(Object[].class), any(Locale.class)))
