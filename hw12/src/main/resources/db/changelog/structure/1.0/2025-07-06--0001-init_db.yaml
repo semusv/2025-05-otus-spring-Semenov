@@ -1,0 +1,98 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2025-07-06--0001-authors
+      author: vvsemenov
+      comment: Создание таблицы authors
+      changes:
+        - createTable:
+            tableName: authors
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: full_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 2025-07-06--0001-books
+      author: vvsemenov
+      comment: Создание таблицы books
+      changes:
+        - createTable:
+            tableName: books
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: author_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_books_authors
+                    references: authors(id)
+                    deleteCascade: true
+
+  - changeSet:
+      id: 2025-07-06--0001-genres
+      author: vvsemenov
+      comment: Создание таблицы genres
+      changes:
+        - createTable:
+            tableName: genres
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+
+
+  - changeSet:
+      id: 2025-07-06--0002-books_genres
+      author: vvsemenov
+      comment: Создание таблицы связи books_genres
+      changes:
+        - createTable:
+            tableName: books_genres
+            columns:
+              - column:
+                  name: book_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_books_genres_books
+                    references: books(id)
+                    deleteCascade: true
+                    primaryKey: true
+              - column:
+                  name: genre_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_books_genres_genres
+                    references: genres(id)
+                    deleteCascade: true
+                    primaryKey: true
