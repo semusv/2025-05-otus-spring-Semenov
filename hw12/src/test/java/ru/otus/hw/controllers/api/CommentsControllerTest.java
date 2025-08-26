@@ -113,7 +113,7 @@ class CommentsControllerTest {
         mockMvc.perform(post("/api/books/{id}/comments", bookId)
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(newComment)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
 
                 .andExpect(jsonPath("$.id", is(savedComment.id().intValue())))
                 .andExpect(jsonPath("$.text", is(savedComment.text())))
@@ -137,8 +137,7 @@ class CommentsControllerTest {
         //then
         mockMvc.perform(delete("/api/books/{id}/comments/{commentId}",
                         bookId, commentId))
-                .andExpect(status().isOk())
-                .andExpect(content().json(mapper.writeValueAsString(commentId)))
+                .andExpect(status().isNoContent())
                 .andDo(print());
         verify(commentService, times(1)).deleteById(commentId);
     }

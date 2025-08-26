@@ -3,12 +3,13 @@ package ru.otus.hw.controllers.api;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.otus.hw.dto.CommentDto;
 import ru.otus.hw.services.CommentService;
@@ -25,26 +26,25 @@ public class CommentsController {
     private final CommentService commentService;
 
     @GetMapping("/api/books/{id}/comments")
+    @ResponseStatus(HttpStatus.OK)
     public List<CommentDto> getCommentsForBookId(
             @PathVariable("id") Long bookId) {
         return commentService.findByBookId(bookId);
     }
 
     @PostMapping("api/books/{id}/comments")
-    public ResponseEntity<CommentDto> addCommentToBook(
+    @ResponseStatus(HttpStatus.CREATED)
+    public CommentDto addCommentToBook(
             @PathVariable("id") Long id,
             @Valid @RequestBody CommentDto commentDto) {
-
-        var newCommentDto = commentService.insert(commentDto);
-        return ResponseEntity.ok(newCommentDto);
+        return commentService.insert(commentDto);
     }
 
     @DeleteMapping("api/books/{id}/comments/{commentId}")
-    public ResponseEntity<Long> deleteCommentFromBook(
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteCommentFromBook(
             @PathVariable("id") Long id,
             @PathVariable("commentId") Long commentId) {
-
         commentService.deleteById(commentId);
-        return ResponseEntity.ok(commentId);
     }
 }

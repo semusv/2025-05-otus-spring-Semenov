@@ -294,8 +294,8 @@ async function handleDeleteBook(event) {
     }
 
     try {
-        const deletedId = await deleteBook(bookId);
-        showSuccessMessage(getLocaleMessage("apiResponseOkDeleteBook", deletedId));
+        await deleteBook(bookId);
+        showSuccessMessage(getLocaleMessage("apiResponseOkDeleteBook", bookId));
         window.location.href = '/';
     }
     catch (error) {
@@ -321,9 +321,9 @@ async function handleDeleteComment(event) {
         return;
     }
     try {
-        const deletedId = await deleteComment(commentId, bookId);
+        await deleteComment(commentId, bookId);
         commentItem.remove();
-        showSuccessMessage(getLocaleMessage("apiResponseOkDeleteComment", deletedId));
+        showSuccessMessage(getLocaleMessage("apiResponseOkDeleteComment", commentId));
     } catch (error) {
         console.error('Failed delete comment:', error);
         if (error.status === 400) {

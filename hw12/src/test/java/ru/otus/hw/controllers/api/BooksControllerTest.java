@@ -165,7 +165,7 @@ class BooksControllerTest {
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(formDto)))
                 .andDo(print())
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", Matchers.is(created.id().intValue())))
                 .andExpect(jsonPath("$.title", Matchers.is(created.title())))
                 .andExpect(jsonPath("$.author.id", Matchers.is(created.author().id().intValue())))
@@ -233,8 +233,7 @@ class BooksControllerTest {
         //then
         mockMvc.perform(delete("/api/books/{id}", id))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().json(mapper.writeValueAsString(id)));
+                .andExpect(status().isNoContent());
 
         verify(bookService, times(1)).deleteById(id);
     }

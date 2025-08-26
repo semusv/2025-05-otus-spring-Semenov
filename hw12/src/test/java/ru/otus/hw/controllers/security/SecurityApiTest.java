@@ -147,7 +147,7 @@ class SecurityApiTest {
     @WithMockUser(username = "user")
     void shouldOkApiDeleteEndpointAuthorized(Endpoint endpoint) throws Exception {
         mockMvc.perform(request(endpoint.method, endpoint.path))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
 
     @Test
@@ -164,7 +164,7 @@ class SecurityApiTest {
         mockMvc.perform(post("/api/books/{id}/comments", bookId)
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(newComment)))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @Test
@@ -188,7 +188,7 @@ class SecurityApiTest {
         mockMvc.perform(post("/api/books")
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(bookCreateDto)))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
 
