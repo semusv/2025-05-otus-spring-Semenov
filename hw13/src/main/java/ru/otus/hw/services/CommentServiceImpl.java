@@ -1,6 +1,7 @@
 package ru.otus.hw.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.mappers.CommentMapper;
@@ -62,6 +63,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public CommentDto insert(CommentDto commentDto) {
         var comment = new Comment();
         comment.setText(commentDto.text());
