@@ -1,0 +1,51 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2025-08-23--0003-users-table
+      author: vvsemenov
+      comment: Создание таблицы users
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: username
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: password
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: 2025-08-23--0004-user-roles-table
+      author: vvsemenov
+      comment: Создание таблицы user_roles
+      changes:
+        - createTable:
+            tableName: user_roles
+            columns:
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_user_roles_users
+                    references: users(id)
+                    deleteCascade: true
+              - column:
+                  name: role
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+        - addPrimaryKey:
+            tableName: user_roles
+            columnNames: user_id, role
