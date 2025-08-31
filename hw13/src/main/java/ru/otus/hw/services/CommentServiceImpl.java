@@ -51,6 +51,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public void deleteById(long id) {
         if (!commentRepository.existsById(id)) {
             throw new EntityNotFoundException(
@@ -74,6 +75,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public CommentDto update(CommentDto commentDto) {
         Comment comment = commentRepository.findById(commentDto.id())
                 .orElseThrow(() ->
@@ -85,6 +87,7 @@ public class CommentServiceImpl implements CommentService {
         comment.setText(commentDto.text());
         return commentDtoConverter.toCommentDto(commentRepository.save(comment));
     }
+
 
     private Book getBookById(long id) throws EntityNotFoundException {
         return bookRepository.findById(id)

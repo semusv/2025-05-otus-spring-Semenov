@@ -30,6 +30,7 @@ public class GlobalResponseEntityExceptionHandler extends ResponseEntityExceptio
 
     private final ErrorHandlingService errorHandlingService;
 
+    //404
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<Object> handleEntityNotFoundForWeb(
             EntityNotFoundException ex,
@@ -44,6 +45,7 @@ public class GlobalResponseEntityExceptionHandler extends ResponseEntityExceptio
 
     }
 
+    //403
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Object> handleAccessDeniedException(
             AccessDeniedException ex,
@@ -52,7 +54,7 @@ public class GlobalResponseEntityExceptionHandler extends ResponseEntityExceptio
         return errorHandlingService.handleError(
                 ex,
                 request,
-                HttpStatus.NOT_FOUND,
+                HttpStatus.FORBIDDEN,
                 "error.access.denied",
                 (Object[]) null);
 

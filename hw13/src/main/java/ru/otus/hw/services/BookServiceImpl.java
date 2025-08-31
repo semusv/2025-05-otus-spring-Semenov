@@ -1,6 +1,9 @@
 package ru.otus.hw.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.acls.domain.BasePermission;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.dto.api.BookCreateDto;
@@ -33,6 +36,8 @@ public class BookServiceImpl implements BookService {
 
     private final GenreRepository genreRepository;
 
+    private final AclServiceWrapperService aclServiceWrapperService;
+
     @Override
     @Transactional(readOnly = true)
     public BookDto findById(long id) {
@@ -56,21 +61,27 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public void deleteById(long id) {
         bookRepository.deleteById(id);
     }
 
     @Override
     @Transactional
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public BookDto insert(BookCreateDto bookCreateDto) {
         var book = new Book();
         prepareBook(bookCreateDto.title(), bookCreateDto.authorId(), bookCreateDto.genreIds(), book);
-        return bookMapper.toBookDto(bookRepository.save(book));
+        Book savedBook = bookRepository.save(book);
+        aclServiceWrapperService.createPermission(savedBook, BasePermission.READ);
+        return bookMapper.toBookDto(savedBook);
     }
 
     @Override
     @Transactional
-    public BookDto update(BookUpdateDto bookUpdateDto) {
+//    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @PreAuthorize("hasPermission(#bookUpdateDto.id(), 'ru.otus.hw.models.Book', 'WRITE')")
+    public BookDto update(@P("bookUpdateDto") BookUpdateDto bookUpdateDto) {
         Book book = bookRepository.findById(bookUpdateDto.id()).orElseThrow(
                 () ->
                         new EntityNotFoundException(
@@ -78,6 +89,9 @@ public class BookServiceImpl implements BookService {
                                 "exception.entity.not.found.book",
                                 bookUpdateDto.id())
         );
+
+
+
         prepareBook(bookUpdateDto.title(), bookUpdateDto.authorId(), bookUpdateDto.genreIds(), book);
         return bookMapper.toBookDto(bookRepository.save(book));
     }

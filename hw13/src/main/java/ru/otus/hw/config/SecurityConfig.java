@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
+import org.springframework.security.acls.AclPermissionCacheOptimizer;
+import org.springframework.security.acls.AclPermissionEvaluator;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -45,7 +47,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/login", "/error", "/webjars/**", "/css/**", "/js/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
-                        .requestMatchers("/books/new").hasRole("ADMIN")
+                        .requestMatchers("/books/new", "/books/*/edit").hasAnyRole("ADMIN", "USER")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -63,10 +65,9 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
-    public MethodSecurityExpressionHandler methodSecurityExpressionHandler() {
-        return new DefaultMethodSecurityExpressionHandler();
-    }
+
+
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

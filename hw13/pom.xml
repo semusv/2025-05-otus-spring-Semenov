@@ -11,7 +11,9 @@
     </parent>
 
     <properties>
+        <ehcache-core.version>2.6.11</ehcache-core.version>
         <mapstruct.version>1.6.0</mapstruct.version>
+        <org.ehcache.version>3.10.8</org.ehcache.version>
     </properties>
     <dependencies>
         <dependency>
@@ -76,6 +78,25 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
+<!--ACL-->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-acl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <version>${org.ehcache.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
