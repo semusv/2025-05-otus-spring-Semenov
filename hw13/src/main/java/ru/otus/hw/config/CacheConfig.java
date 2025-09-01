@@ -18,18 +18,18 @@ public class CacheConfig {
     public javax.cache.CacheManager jcacheCacheManager() {
         CachingProvider provider = Caching.getCachingProvider();
         javax.cache.CacheManager cacheManager = provider.getCacheManager();
-        createSimpleCache(cacheManager, "aclCache");
+        createSimpleCache(cacheManager);
         return cacheManager;
     }
 
-    private void createSimpleCache(javax.cache.CacheManager cacheManager, String cacheName) {
-        if (cacheManager.getCache(cacheName) == null) {
+    private void createSimpleCache(javax.cache.CacheManager cacheManager) {
+        if (cacheManager.getCache("aclCache") == null) {
             MutableConfiguration<Object, Object> config = new MutableConfiguration<>()
                     .setTypes(Object.class, Object.class)
                     .setStoreByValue(false)
                     .setStatisticsEnabled(true);
 
-            cacheManager.createCache(cacheName, config);
+            cacheManager.createCache("aclCache", config);
         }
     }
 
