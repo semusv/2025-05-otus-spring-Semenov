@@ -1,7 +1,6 @@
 package ru.otus.hw.services;
 
 import jakarta.annotation.Nullable;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
@@ -39,18 +38,6 @@ public class ErrorHandlingServiceImpl implements ErrorHandlingService {
         return buildApiErrorResponse(ex, errorText, status, getRequestPath(request));
     }
 
-    @Override
-    public ResponseEntity<Object> handleError(
-            Exception ex,
-            HttpServletRequest request,
-            HttpStatus status,
-            String messageCode,
-            Object... args) {
-
-        String errorText = getLocalizedErrorMessage(messageCode, args);
-
-        return buildApiErrorResponse(ex, errorText, status, request.getServletPath());
-    }
 
     private String getLocalizedErrorMessage(String messageCode, Object... args) {
         return messageSource.getMessage(
