@@ -18,7 +18,6 @@ import ru.otus.hw.services.CustomUserDetailsService;
 @EnableWebSecurity
 @RequiredArgsConstructor
 @EnableMethodSecurity(
-        prePostEnabled = true,
         securedEnabled = true,
         jsr250Enabled = true,
         proxyTargetClass = true
@@ -38,7 +37,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/login", "/error", "/webjars/**", "/css/**", "/js/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
-//                        .requestMatchers("/api/**").permitAll()
                         .requestMatchers("/books/new", "/books/*/edit").hasAnyRole("ADMIN", "USER")
                         .anyRequest().authenticated()
                 )
@@ -51,7 +49,7 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .exceptionHandling(exception -> exception
-                        .accessDeniedHandler(customAccessDeniedHandler) // используем бин
+                        .accessDeniedHandler(customAccessDeniedHandler)
                 )
                 .userDetailsService(userDetailsService);
         return http.build();

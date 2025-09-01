@@ -19,10 +19,6 @@ public class CacheConfig {
         CachingProvider provider = Caching.getCachingProvider();
         javax.cache.CacheManager cacheManager = provider.getCacheManager();
         createSimpleCache(cacheManager, "aclCache");
-        createSimpleCache(cacheManager, "aclEntryCache");
-        createSimpleCache(cacheManager, "aclObjectIdentityCache");
-        createSimpleCache(cacheManager, "aclSidCache");
-
         return cacheManager;
     }
 
