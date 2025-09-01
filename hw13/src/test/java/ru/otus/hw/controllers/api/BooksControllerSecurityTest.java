@@ -1,5 +1,4 @@
-package ru.otus.hw.controllers.security;
-
+package ru.otus.hw.controllers.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -14,59 +13,40 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.hw.config.SecurityConfig;
-import ru.otus.hw.controllers.api.AuthorsController;
-import ru.otus.hw.controllers.api.BooksController;
-import ru.otus.hw.controllers.api.CommentsController;
-import ru.otus.hw.controllers.api.GenresController;
+import ru.otus.hw.controllers.handlers.CustomAccessDeniedHandler;
 import ru.otus.hw.controllers.handlers.GlobalExceptionHandler;
 import ru.otus.hw.controllers.handlers.GlobalResponseEntityExceptionHandler;
 import ru.otus.hw.controllers.handlers.ValidationExceptionHandler;
-import ru.otus.hw.controllers.pages.AuthorsPagesController;
-import ru.otus.hw.controllers.pages.BooksPagesController;
-import ru.otus.hw.controllers.pages.GenresPagesController;
 import ru.otus.hw.dto.AuthorDto;
 import ru.otus.hw.dto.BookDto;
-import ru.otus.hw.dto.CommentDto;
 import ru.otus.hw.dto.GenreDto;
 import ru.otus.hw.dto.api.BookCreateDto;
 import ru.otus.hw.dto.api.BookUpdateDto;
-import ru.otus.hw.formatters.ErrorMessageFormatter;
-import ru.otus.hw.services.AuthorService;
-import ru.otus.hw.services.BookService;
-import ru.otus.hw.services.CommentService;
+import ru.otus.hw.formatters.ErrorMessageFormatter;import ru.otus.hw.services.BookService;
 import ru.otus.hw.services.CustomUserDetailsService;
-import ru.otus.hw.services.GenreService;
+import ru.otus.hw.services.ErrorHandlingService;
 
 import java.util.List;
-
 import java.util.Set;
 import java.util.stream.Stream;
 
-
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SuppressWarnings("unused")
 @WebMvcTest(controllers = {
-        AuthorsController.class,
-        BooksController.class,
-        CommentsController.class,
-        GenresController.class,
-        AuthorsPagesController.class,
-        BooksPagesController.class,
-        GenresPagesController.class
+        BooksController.class
 })
 @Import({
         GlobalExceptionHandler.class,
         GlobalResponseEntityExceptionHandler.class,
         ValidationExceptionHandler.class,
-        SecurityConfig.class
+        SecurityConfig.class,
+        CustomAccessDeniedHandler.class
 })
-class SecurityApiTest {
+@DisplayName("Проверка аутентификации для API контроллера Книг")
+class BooksControllerSecurityTest {
     @Autowired
     private ObjectMapper mapper;
 
@@ -74,17 +54,8 @@ class SecurityApiTest {
     private MockMvc mockMvc;
 
     @MockitoBean
-    private AuthorService authorService;
-
-    @MockitoBean
     private BookService bookService;
-
-    @MockitoBean
-    private CommentService commentService;
-
-    @MockitoBean
-    private GenreService genreService;
-
+    
     @MockitoBean
     private CustomUserDetailsService userDetailsService;
 
@@ -94,26 +65,27 @@ class SecurityApiTest {
     @MockitoBean
     private ValidationExceptionHandler validationExceptionHandler;
 
+    @MockitoBean
+    ErrorHandlingService errorHandlingService;
+
+    record Endpoint(HttpMethod method, String path, String description) {
+    }
 
     static Stream<Endpoint> getApiEndpoints() {
         return Stream.of(
-                new Endpoint(HttpMethod.GET, "/api/authors", "Get all authors"),
                 new Endpoint(HttpMethod.GET, "/api/books", "Get all books"),
-                new Endpoint(HttpMethod.GET, "/api/books/1", "Get book by id"),
-                new Endpoint(HttpMethod.GET, "/api/books/1/comments", "Get comments for book")
+                new Endpoint(HttpMethod.GET, "/api/books/1", "Get book by id")
         );
     }
 
     static Stream<Endpoint> deleteApiEndpoints() {
         return Stream.of(
-                new Endpoint(HttpMethod.DELETE, "/api/books/1", "Delete book"),
-                new Endpoint(HttpMethod.DELETE, "/api/books/1/comments/1", "Delete comment")
+                new Endpoint(HttpMethod.DELETE, "/api/books/1", "Delete book")
         );
     }
 
     static Stream<Endpoint> postApiEndpoints() {
         return Stream.of(
-                new Endpoint(HttpMethod.POST, "/api/books/1/comments", "Add comment to book"),
                 new Endpoint(HttpMethod.POST, "/api/books", "Create new book")
         );
     }
@@ -150,22 +122,6 @@ class SecurityApiTest {
                 .andExpect(status().isNoContent());
     }
 
-    @Test
-    @DisplayName("POST /api/books/{id}/comments – добавление нового комментария с авторизованным пользователем")
-    @WithMockUser(username = "user")
-    void shouldAddCommentToBookAuthorized() throws Exception {
-        //given
-        Long bookId = 5L;
-        CommentDto newComment = new CommentDto(null, "Nice book", bookId);
-        CommentDto savedComment = new CommentDto(99L, "Nice book", bookId);
-        //when
-        when(commentService.insert(newComment)).thenReturn(savedComment);
-        //then
-        mockMvc.perform(post("/api/books/{id}/comments", bookId)
-                        .contentType(APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(newComment)))
-                .andExpect(status().isCreated());
-    }
 
     @Test
     @WithMockUser(username = "user")
@@ -223,6 +179,4 @@ class SecurityApiTest {
                 .andExpect(status().isOk());
     }
 
-    record Endpoint(HttpMethod method, String path, String description) {
-    }
 }

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import ru.otus.hw.dto.CommentDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.mappers.CommentMapperImpl;
@@ -17,12 +18,15 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 @DisplayName("Сервис для работы с комментариями")
 @DataJpaTest
 @Import({CommentServiceImpl.class,
-
         CommentMapperImpl.class})
 class CommentServiceImplTest {
 
     @Autowired
     private CommentService commentService;
+
+    @Autowired
+    @MockitoBean
+    private AclServiceWrapperService aclServiceWrapperService;
 
     @Test
     @DisplayName("должен загружать комментарий по id")

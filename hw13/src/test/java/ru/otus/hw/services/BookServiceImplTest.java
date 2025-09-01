@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import ru.otus.hw.dto.api.BookCreateDto;
 import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.dto.api.BookUpdateDto;
@@ -33,6 +34,11 @@ class BookServiceImplTest {
 
     @Autowired
     private BookService bookService;
+
+    @Autowired
+    @MockitoBean
+    private AclServiceWrapperService aclServiceWrapperService;
+
 
     @Test
     @DisplayName("должен загружать книгу по id с автором и жанрами")

@@ -73,13 +73,13 @@ public class BookServiceImpl implements BookService {
         var book = new Book();
         prepareBook(bookCreateDto.title(), bookCreateDto.authorId(), bookCreateDto.genreIds(), book);
         Book savedBook = bookRepository.save(book);
-        aclServiceWrapperService.createPermission(savedBook, BasePermission.READ);
+        aclServiceWrapperService.grantPermission(savedBook, BasePermission.WRITE);
+        aclServiceWrapperService.grantAdminPermission(savedBook);
         return bookMapper.toBookDto(savedBook);
     }
 
     @Override
     @Transactional
-//    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @PreAuthorize("hasPermission(#bookUpdateDto.id(), 'ru.otus.hw.models.Book', 'WRITE')")
     public BookDto update(@P("bookUpdateDto") BookUpdateDto bookUpdateDto) {
         Book book = bookRepository.findById(bookUpdateDto.id()).orElseThrow(
@@ -89,7 +89,6 @@ public class BookServiceImpl implements BookService {
                                 "exception.entity.not.found.book",
                                 bookUpdateDto.id())
         );
-
 
 
         prepareBook(bookUpdateDto.title(), bookUpdateDto.authorId(), bookUpdateDto.genreIds(), book);

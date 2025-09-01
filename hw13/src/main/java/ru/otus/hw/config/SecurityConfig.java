@@ -1,15 +1,8 @@
 package ru.otus.hw.config;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
-import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
-import org.springframework.security.acls.AclPermissionCacheOptimizer;
-import org.springframework.security.acls.AclPermissionEvaluator;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -18,10 +11,8 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.AccessDeniedHandler;
 import ru.otus.hw.controllers.handlers.CustomAccessDeniedHandler;
 import ru.otus.hw.services.CustomUserDetailsService;
-import ru.otus.hw.services.ErrorHandlingService;
 
 @Configuration
 @EnableWebSecurity
@@ -29,8 +20,8 @@ import ru.otus.hw.services.ErrorHandlingService;
 @EnableMethodSecurity(
         prePostEnabled = true,
         securedEnabled = true,
-        jsr250Enabled = true,  // добавляем JSR-250 аннотации
-        proxyTargetClass = true // важно для корректной работы
+        jsr250Enabled = true,
+        proxyTargetClass = true
 )
 public class SecurityConfig {
 
@@ -47,6 +38,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/login", "/error", "/webjars/**", "/css/**", "/js/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
+//                        .requestMatchers("/api/**").permitAll()
                         .requestMatchers("/books/new", "/books/*/edit").hasAnyRole("ADMIN", "USER")
                         .anyRequest().authenticated()
                 )

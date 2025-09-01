@@ -21,6 +21,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class ErrorHandlingServiceImpl implements ErrorHandlingService {
+
     private final ErrorMessageFormatter errorMessageFormatter;
 
     private final MessageSource messageSource;

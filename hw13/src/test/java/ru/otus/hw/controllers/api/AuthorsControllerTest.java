@@ -15,6 +15,7 @@ import ru.otus.hw.controllers.handlers.ValidationExceptionHandler;
 import ru.otus.hw.dto.AuthorDto;
 import ru.otus.hw.formatters.ErrorMessageFormatter;
 import ru.otus.hw.services.AuthorService;
+import ru.otus.hw.services.ErrorHandlingService;
 
 import java.util.List;
 
@@ -37,6 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         ValidationExceptionHandler.class
 })
 @AutoConfigureMockMvc(addFilters = false)
+@DisplayName("Контроллер API Авторов")
 class AuthorsControllerTest {
 
     @Autowired
@@ -52,6 +54,9 @@ class AuthorsControllerTest {
     @MockitoBean
     @Autowired
     ErrorMessageFormatter errorMessageFormatter;
+
+    @MockitoBean
+    private ErrorHandlingService errorHandlingService;
 
 
     @Test

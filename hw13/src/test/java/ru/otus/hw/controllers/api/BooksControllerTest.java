@@ -42,6 +42,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import ru.otus.hw.dto.AuthorDto;
 import ru.otus.hw.dto.GenreDto;
 import ru.otus.hw.services.CommentService;
+import ru.otus.hw.services.ErrorHandlingService;
+import ru.otus.hw.services.ErrorHandlingServiceImpl;
 import ru.otus.hw.services.GenreService;
 
 import static org.mockito.Mockito.times;
@@ -59,9 +61,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import({
         GlobalExceptionHandler.class,
         GlobalResponseEntityExceptionHandler.class,
-        ValidationExceptionHandler.class
+        ValidationExceptionHandler.class,
+        ErrorHandlingServiceImpl.class
 })
 @AutoConfigureMockMvc(addFilters = false)
+@DisplayName("Контроллер API книг")
 class BooksControllerTest {
 
     private static final String API_URL = "/api/books";
@@ -95,6 +99,7 @@ class BooksControllerTest {
     @MockitoBean
     @Autowired
     private ErrorMessageFormatter errorMessageFormatter;
+
 
 
     @Test

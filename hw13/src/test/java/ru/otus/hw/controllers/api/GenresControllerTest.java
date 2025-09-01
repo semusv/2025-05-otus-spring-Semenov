@@ -14,6 +14,7 @@ import ru.otus.hw.controllers.handlers.GlobalResponseEntityExceptionHandler;
 import ru.otus.hw.controllers.handlers.ValidationExceptionHandler;
 import ru.otus.hw.dto.GenreDto;
 import ru.otus.hw.formatters.ErrorMessageFormatter;
+import ru.otus.hw.services.ErrorHandlingService;
 import ru.otus.hw.services.GenreService;
 
 import java.util.List;
@@ -37,6 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         ValidationExceptionHandler.class
 })
 @AutoConfigureMockMvc(addFilters = false)
+@DisplayName("Контроллер API жанров")
 class GenresControllerTest {
 
     @Autowired
@@ -54,6 +56,9 @@ class GenresControllerTest {
 
     @MockitoBean
     private ValidationExceptionHandler validationExceptionHandler;
+
+    @MockitoBean
+    private ErrorHandlingService errorHandlingService;
 
     @Test
     @DisplayName("должен вывести полный список жанров")

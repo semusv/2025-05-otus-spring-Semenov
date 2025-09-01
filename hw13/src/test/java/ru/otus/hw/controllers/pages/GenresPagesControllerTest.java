@@ -30,7 +30,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         }
 )
 @AutoConfigureMockMvc(addFilters = false)
-class GenrePagesControllerTest {
+@DisplayName("Контроллер страниц жанров")
+class GenresPagesControllerTest {
     @Autowired
     private MockMvc mockMvc;
 

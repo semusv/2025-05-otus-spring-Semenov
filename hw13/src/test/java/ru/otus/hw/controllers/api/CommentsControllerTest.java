@@ -22,12 +22,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import ru.otus.hw.controllers.handlers.CustomAccessDeniedHandler;
 import ru.otus.hw.controllers.handlers.GlobalExceptionHandler;
 import ru.otus.hw.controllers.handlers.GlobalResponseEntityExceptionHandler;
 import ru.otus.hw.controllers.handlers.ValidationExceptionHandler;
 import ru.otus.hw.dto.CommentDto;
 import ru.otus.hw.formatters.ErrorMessageFormatter;
 import ru.otus.hw.services.CommentService;
+import ru.otus.hw.services.ErrorHandlingService;
 
 import java.util.List;
 import java.util.Locale;
@@ -48,8 +50,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import({
         GlobalExceptionHandler.class,
         GlobalResponseEntityExceptionHandler.class,
-        ValidationExceptionHandler.class
+        ValidationExceptionHandler.class,
+        CustomAccessDeniedHandler.class
 })
+@DisplayName("Контроллер API комментов")
 class CommentsControllerTest {
 
     @Autowired
@@ -66,6 +70,9 @@ class CommentsControllerTest {
 
     @MockitoBean
     private ValidationExceptionHandler validationExceptionHandler;
+
+    @MockitoBean
+    private ErrorHandlingService errorHandlingService;
 
     @MockitoBean
     @Autowired

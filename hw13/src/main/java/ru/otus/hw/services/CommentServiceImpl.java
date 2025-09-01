@@ -2,6 +2,8 @@ package ru.otus.hw.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.acls.domain.BasePermission;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.hw.mappers.CommentMapper;
@@ -27,6 +29,8 @@ public class CommentServiceImpl implements CommentService {
 
     private final BookRepository bookRepository;
 
+    private final AclServiceWrapperService aclServiceWrapperService;
+
     @Override
     @Transactional(readOnly = true)
     public CommentDto findById(long id) {
@@ -51,8 +55,8 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public void deleteById(long id) {
+    @PreAuthorize("hasPermission(#id, 'ru.otus.hw.models.Comment', 'DELETE')")
+    public void deleteById(@P("id") long id) {
         if (!commentRepository.existsById(id)) {
             throw new EntityNotFoundException(
                     COMMENT_WITH_ID_D_NOT_FOUND.formatted(id),
@@ -70,13 +74,17 @@ public class CommentServiceImpl implements CommentService {
         comment.setText(commentDto.text());
         var book = getBookById(commentDto.bookId());
         comment.setBook(book);
-        return commentDtoConverter.toCommentDto(commentRepository.save(comment));
+        var newComment = commentRepository.save(comment);
+        aclServiceWrapperService.grantPermission(newComment, BasePermission.DELETE);
+        aclServiceWrapperService.grantPermission(newComment, BasePermission.WRITE);
+        aclServiceWrapperService.grantAdminPermission(newComment);
+        return commentDtoConverter.toCommentDto(newComment);
     }
 
     @Override
     @Transactional
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public CommentDto update(CommentDto commentDto) {
+    @PreAuthorize("hasPermission(#commentDto.id(), 'ru.otus.hw.models.Comment', 'WRITE')")
+    public CommentDto update(@P("commentDto") CommentDto commentDto) {
         Comment comment = commentRepository.findById(commentDto.id())
                 .orElseThrow(() ->
                         new EntityNotFoundException(

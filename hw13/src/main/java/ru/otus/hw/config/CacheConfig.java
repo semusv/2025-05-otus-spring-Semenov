@@ -18,8 +18,6 @@ public class CacheConfig {
     public javax.cache.CacheManager jcacheCacheManager() {
         CachingProvider provider = Caching.getCachingProvider();
         javax.cache.CacheManager cacheManager = provider.getCacheManager();
-
-        // Простая конфигурация без EhCache-specific настроек
         createSimpleCache(cacheManager, "aclCache");
         createSimpleCache(cacheManager, "aclEntryCache");
         createSimpleCache(cacheManager, "aclObjectIdentityCache");
