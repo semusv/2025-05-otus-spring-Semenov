@@ -1,8 +1,7 @@
 package ru.otus.hw.services;
 
-import ru.otus.hw.dto.api.BookCreateDto;
+import ru.otus.hw.dto.api.BookFormDto;
 import ru.otus.hw.dto.BookDto;
-import ru.otus.hw.dto.api.BookUpdateDto;
 
 import java.util.List;
 
@@ -12,9 +11,9 @@ public interface BookService {
 
     List<BookDto> findAll();
 
-    BookDto insert(BookCreateDto bookCreateDto);
+    BookDto insert(BookFormDto bookCreateDto);
 
-    BookDto update(BookUpdateDto bookUpdateDto);
+    BookDto update(Long id, BookFormDto bookFormDto);
 
     void deleteById(long id);
 }

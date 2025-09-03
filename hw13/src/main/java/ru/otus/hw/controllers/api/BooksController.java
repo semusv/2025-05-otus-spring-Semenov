@@ -12,9 +12,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import ru.otus.hw.dto.api.BookCreateDto;
+import ru.otus.hw.dto.api.BookFormDto;
 import ru.otus.hw.dto.BookDto;
-import ru.otus.hw.dto.api.BookUpdateDto;
 import ru.otus.hw.services.BookService;
 
 import java.util.List;
@@ -44,7 +43,7 @@ public class BooksController {
     @PostMapping("/api/books")
     @ResponseStatus(HttpStatus.CREATED)
     public BookDto insertBook(
-            @Valid @RequestBody BookCreateDto bookCreateDto) {
+            @Valid @RequestBody BookFormDto bookCreateDto) {
         return bookService.insert(bookCreateDto);
     }
 
@@ -53,8 +52,8 @@ public class BooksController {
     @ResponseStatus(HttpStatus.OK)
     public BookDto updateBook(
             @PathVariable("id") Long id,
-            @Valid @RequestBody BookUpdateDto bookUpdateDto) {
-        return bookService.update(bookUpdateDto);
+            @Valid @RequestBody BookFormDto bookFormDto) {
+        return bookService.update(id, bookFormDto);
     }
 
     @DeleteMapping("/api/books/{id}")

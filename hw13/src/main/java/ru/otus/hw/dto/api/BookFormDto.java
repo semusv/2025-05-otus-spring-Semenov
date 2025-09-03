@@ -11,9 +11,7 @@ import java.util.Set;
  * DTO for {@link ru.otus.hw.models.Book}
  */
 @Builder
-public record BookUpdateDto(
-        @NotNull(message = "{validation.book.id.notnull}")
-        Long id,
+public record BookFormDto(
 
         @NotBlank(message = "{validation.book.title.not-blank}")
         @Size(max = 100, message = "{validation.book.title.size}")

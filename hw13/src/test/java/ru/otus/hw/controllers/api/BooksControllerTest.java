@@ -19,12 +19,11 @@ import ru.otus.hw.controllers.handlers.GlobalExceptionHandler;
 import ru.otus.hw.controllers.handlers.GlobalResponseEntityExceptionHandler;
 import ru.otus.hw.controllers.handlers.ValidationExceptionHandler;
 import ru.otus.hw.dto.BookDto;
+import ru.otus.hw.dto.api.BookFormDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.formatters.ErrorMessageFormatter;
 import ru.otus.hw.services.AuthorService;
 import ru.otus.hw.services.BookService;
-import ru.otus.hw.dto.api.BookCreateDto;
-import ru.otus.hw.dto.api.BookUpdateDto;
 
 import java.util.List;
 import java.util.Locale;
@@ -42,7 +41,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import ru.otus.hw.dto.AuthorDto;
 import ru.otus.hw.dto.GenreDto;
 import ru.otus.hw.services.CommentService;
-import ru.otus.hw.services.ErrorHandlingService;
 import ru.otus.hw.services.ErrorHandlingServiceImpl;
 import ru.otus.hw.services.GenreService;
 
@@ -150,8 +148,8 @@ class BooksControllerTest {
     @DisplayName("POST /api/books - создаёт книгу и возвращает ResponseDto")
     void shouldCreateAndReturnResponse() throws Exception {
         //given
-        BookCreateDto formDto = new BookCreateDto(
-                0L, "Новая книга", 1L, Set.of(1L));
+        BookFormDto formDto = new BookFormDto(
+                "Новая книга", 1L, Set.of(1L));
         BookDto created = new BookDto(
                 99L,
                 formDto.title(),
@@ -185,8 +183,7 @@ class BooksControllerTest {
     void shouldUpdateAndReturnResponse() throws Exception {
         //given
         long id = 10L;
-        BookUpdateDto updateDto = new BookUpdateDto(
-                id,
+        BookFormDto updateDto = new BookFormDto(
                 "Обновлённая книга",
                 2L,
                 Set.of(3L, 4L)
@@ -202,7 +199,7 @@ class BooksControllerTest {
         );
 
         //when
-        when(bookService.update(updateDto)).thenReturn(updated);
+        when(bookService.update(id,updateDto)).thenReturn(updated);
         when(messageSource.getMessage(eq("api.response.ok.save.book"),
                 any(Object[].class), any(Locale.class)))
                 .thenReturn("Book updated");
@@ -218,7 +215,7 @@ class BooksControllerTest {
                 .andExpect(jsonPath("$.author.id", Matchers.is(updated.author().id().intValue())))
                 .andExpect(jsonPath("$.genres", hasSize(updated.genres().size())));
 
-        verify(bookService, times(1)).update(updateDto);
+        verify(bookService, times(1)).update(id,updateDto);
     }
 
 
@@ -248,8 +245,8 @@ class BooksControllerTest {
     @DisplayName("POST /api/books - возвращает 400, когда пустые поля")
     void shouldReturnResponse400WhenEmptyFields() throws Exception {
         //given
-        BookCreateDto formDto = new BookCreateDto(
-                0L, "Новая книга", null, Set.of(1L));
+        BookFormDto formDto = new BookFormDto(
+                "Новая книга", null, Set.of(1L));
         //then
         mockMvc.perform(post(API_URL)
                         .contentType(APPLICATION_JSON)
@@ -290,8 +287,8 @@ class BooksControllerTest {
     @DisplayName("POST /api/books - возвращает 500, когда некорректный путь")
     void shouldReturnResponse500WhenWrongUrl() throws Exception {
         //given
-        BookCreateDto formDto = new BookCreateDto(
-                0L, "Новая книга", 1L, Set.of(1L));
+        BookFormDto formDto = new BookFormDto(
+                 "Новая книга", 1L, Set.of(1L));
         //then
         mockMvc.perform(post("/api/wrongUrl")
                         .contentType(APPLICATION_JSON)

@@ -6,9 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import ru.otus.hw.dto.api.BookCreateDto;
 import ru.otus.hw.dto.BookDto;
-import ru.otus.hw.dto.api.BookUpdateDto;
+import ru.otus.hw.dto.api.BookFormDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.mappers.AuthorMapperImpl;
 import ru.otus.hw.mappers.BookMapperImpl;
@@ -97,13 +96,12 @@ class BookServiceImplTest {
         long authorId = 1L;
         Set<Long> genresIds = Set.of(1L, 2L);
 
-        BookUpdateDto bookUpdateDto = BookUpdateDto.builder()
-                .id(bookId)
+        BookFormDto bookFormDto = BookFormDto.builder()
                 .title(updatedTitle)
                 .authorId(authorId)
                 .genreIds(genresIds).build();
 
-        BookDto result = bookService.update(bookUpdateDto);
+        BookDto result = bookService.update(bookId, bookFormDto);
 
         assertThat(result.id()).isEqualTo(bookId);
         assertThat(result.title()).isEqualTo(updatedTitle);
@@ -118,7 +116,7 @@ class BookServiceImplTest {
         long authorId = 1L;
         Set<Long> genresIds = Set.of(1L, 2L);
 
-        BookCreateDto bookCreateDto = BookCreateDto.builder()
+        BookFormDto bookCreateDto = BookFormDto.builder()
                 .title(title)
                 .authorId(authorId)
                 .genreIds(genresIds).build();
@@ -135,7 +133,7 @@ class BookServiceImplTest {
     @Test
     @DisplayName("должен выбрасывать исключение при создании книги с несуществующим автором")
     void shouldThrowWhenCreateBookWithNonExistingAuthor() {
-        BookCreateDto bookCreateDto = BookCreateDto.builder()
+        BookFormDto bookCreateDto = BookFormDto.builder()
                 .title("Title")
                 .authorId(999L)
                 .genreIds(Set.of(1L)).build();
@@ -148,7 +146,7 @@ class BookServiceImplTest {
     @Test
     @DisplayName("должен выбрасывать исключение при создании книги с несуществующими жанрами")
     void shouldThrowWhenCreateBookWithNonExistingGenres() {
-        BookCreateDto bookCreateDto = BookCreateDto.builder()
+        BookFormDto bookCreateDto = BookFormDto.builder()
                 .title("Title")
                 .authorId(1L)
                 .genreIds(Set.of(999L)).build();
@@ -162,13 +160,13 @@ class BookServiceImplTest {
     @Test
     @DisplayName("должен выбрасывать исключение при обновлении книги с несуществующим автором")
     void shouldThrowWhenUpdateBookWithNonExistingAuthor() {
-        BookUpdateDto bookUpdateDto = BookUpdateDto.builder()
-                .id(1L)
+        long bookId = 1L;
+        BookFormDto bookFormDto = BookFormDto.builder()
                 .title("Title")
                 .authorId(999L)
                 .genreIds(Set.of(1L)).build();
 
-        assertThatThrownBy(() -> bookService.update(bookUpdateDto))
+        assertThatThrownBy(() -> bookService.update(bookId, bookFormDto))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining("Author with id 999 not found");
     }
@@ -176,13 +174,13 @@ class BookServiceImplTest {
     @Test
     @DisplayName("должен выбрасывать исключение при обновлении книги с несуществующими жанрами")
     void shouldThrowWhenUpdateBookWithNonExistingGenres() {
-        BookUpdateDto bookUpdateDto = BookUpdateDto.builder()
-                .id(1L)
+        long bookId = 1L;
+        BookFormDto bookFormDto = BookFormDto.builder()
                 .title("Title")
                 .authorId(1L)
                 .genreIds(Set.of(999L)).build();
 
-        assertThatThrownBy(() -> bookService.update(bookUpdateDto))
+        assertThatThrownBy(() -> bookService.update(bookId, bookFormDto))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining("Genres not found: [999]");
     }

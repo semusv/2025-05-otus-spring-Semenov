@@ -6,9 +6,8 @@ import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.otus.hw.dto.api.BookCreateDto;
+import ru.otus.hw.dto.api.BookFormDto;
 import ru.otus.hw.dto.BookDto;
-import ru.otus.hw.dto.api.BookUpdateDto;
 import ru.otus.hw.exceptions.EntityNotFoundException;
 import ru.otus.hw.mappers.BookMapper;
 import ru.otus.hw.models.Author;
@@ -61,37 +60,37 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    @PreAuthorize("hasAnyRole('ADMIN')")
-    public void deleteById(long id) {
+    @PreAuthorize("hasRole('ADMIN') or hasPermission(#bookId, 'ru.otus.hw.models.Book', 'DELETE')")
+    public void deleteById(@P("bookId") long id) {
         bookRepository.deleteById(id);
     }
 
     @Override
     @Transactional
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
-    public BookDto insert(BookCreateDto bookCreateDto) {
+    public BookDto insert(BookFormDto bookCreateDto) {
         var book = new Book();
         prepareBook(bookCreateDto.title(), bookCreateDto.authorId(), bookCreateDto.genreIds(), book);
         Book savedBook = bookRepository.save(book);
         aclServiceWrapperService.grantPermission(savedBook, BasePermission.WRITE);
+        aclServiceWrapperService.grantPermission(savedBook, BasePermission.DELETE);
         aclServiceWrapperService.grantAdminPermission(savedBook);
         return bookMapper.toBookDto(savedBook);
     }
 
     @Override
     @Transactional
-    @PreAuthorize("hasPermission(#bookUpdateDto.id(), 'ru.otus.hw.models.Book', 'WRITE')")
-    public BookDto update(@P("bookUpdateDto") BookUpdateDto bookUpdateDto) {
-        Book book = bookRepository.findById(bookUpdateDto.id()).orElseThrow(
+    @PreAuthorize("hasPermission(#id, 'ru.otus.hw.models.Book', 'WRITE')")
+    public BookDto update(@P("id") Long id,  @P("bookFormDto") BookFormDto bookFormDto) {
+        Book book = bookRepository.findById(id).orElseThrow(
                 () ->
                         new EntityNotFoundException(
-                                "Book with id %d not found".formatted(bookUpdateDto.id()),
+                                "Book with id %d not found".formatted(id),
                                 "exception.entity.not.found.book",
-                                bookUpdateDto.id())
+                                id)
         );
 
 
-        prepareBook(bookUpdateDto.title(), bookUpdateDto.authorId(), bookUpdateDto.genreIds(), book);
+        prepareBook(bookFormDto.title(), bookFormDto.authorId(), bookFormDto.genreIds(), book);
         return bookMapper.toBookDto(bookRepository.save(book));
     }
 

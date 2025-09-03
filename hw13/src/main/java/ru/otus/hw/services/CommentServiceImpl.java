@@ -55,7 +55,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    @PreAuthorize("hasPermission(#id, 'ru.otus.hw.models.Comment', 'DELETE')")
+    @PreAuthorize("hasRole('ADMIN') or hasPermission(#id, 'ru.otus.hw.models.Comment', 'DELETE')")
     public void deleteById(@P("id") long id) {
         if (!commentRepository.existsById(id)) {
             throw new EntityNotFoundException(
@@ -68,7 +68,6 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public CommentDto insert(CommentDto commentDto) {
         var comment = new Comment();
         comment.setText(commentDto.text());

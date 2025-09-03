@@ -20,8 +20,7 @@ import ru.otus.hw.controllers.handlers.ValidationExceptionHandler;
 import ru.otus.hw.dto.AuthorDto;
 import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.dto.GenreDto;
-import ru.otus.hw.dto.api.BookCreateDto;
-import ru.otus.hw.dto.api.BookUpdateDto;
+import ru.otus.hw.dto.api.BookFormDto;
 import ru.otus.hw.formatters.ErrorMessageFormatter;import ru.otus.hw.services.BookService;
 import ru.otus.hw.services.CustomUserDetailsService;
 import ru.otus.hw.services.ErrorHandlingService;
@@ -29,7 +28,6 @@ import ru.otus.hw.services.ErrorHandlingService;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
-
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -53,18 +51,23 @@ class BooksControllerSecurityTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @SuppressWarnings("unused")
     @MockitoBean
     private BookService bookService;
     
+    @SuppressWarnings("unused")
     @MockitoBean
     private CustomUserDetailsService userDetailsService;
 
+    @SuppressWarnings("unused")
     @MockitoBean
     ErrorMessageFormatter errorMessageFormatter;
 
+    @SuppressWarnings("unused")
     @MockitoBean
     private ValidationExceptionHandler validationExceptionHandler;
 
+    @SuppressWarnings("unused")
     @MockitoBean
     ErrorHandlingService errorHandlingService;
 
@@ -128,8 +131,8 @@ class BooksControllerSecurityTest {
     @DisplayName("POST /api/books - создаёт книгу с авторизованным пользователем")
     void shouldCreateBookAuthorized() throws Exception {
         //given
-        BookCreateDto bookCreateDto = new BookCreateDto(
-                0L, "Новая книга", 1L, Set.of(1L));
+        BookFormDto bookCreateDto = new BookFormDto(
+                "Новая книга", 1L, Set.of(1L));
         BookDto newBookDto = new BookDto(
                 99L,
                 bookCreateDto.title(),
@@ -154,8 +157,7 @@ class BooksControllerSecurityTest {
     void shouldUpdateBookAuthorized() throws Exception {
         //given
         long id = 10L;
-        BookUpdateDto updateDto = new BookUpdateDto(
-                id,
+        BookFormDto updateDto = new BookFormDto(
                 "Обновлённая книга",
                 2L,
                 Set.of(3L, 4L)
@@ -170,7 +172,7 @@ class BooksControllerSecurityTest {
                 )
         );
         //when
-        when(bookService.update(updateDto)).thenReturn(updated);
+        when(bookService.update(id, updateDto)).thenReturn(updated);
 
         //then
         mockMvc.perform(put("/api/books/{id}", id)
@@ -178,5 +180,4 @@ class BooksControllerSecurityTest {
                         .content(mapper.writeValueAsString(updateDto)))
                 .andExpect(status().isOk());
     }
-
 }

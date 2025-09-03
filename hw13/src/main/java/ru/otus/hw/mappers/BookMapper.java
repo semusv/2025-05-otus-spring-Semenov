@@ -6,7 +6,7 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
 import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.dto.GenreDto;
-import ru.otus.hw.dto.api.BookUpdateDto;
+import ru.otus.hw.dto.api.BookFormDto;
 import ru.otus.hw.models.Book;
 
 import java.util.Collections;
@@ -21,10 +21,10 @@ import java.util.stream.Collectors;
 public interface BookMapper {
     BookDto toBookDto(Book book);
 
-    // BookDto в BookUpdateDto
+    // BookDto в BookFormDto
     @Mapping(target = "authorId", source = "bookDto.author.id")
     @Mapping(target = "genreIds", source = "bookDto.genres")
-    BookUpdateDto toBookUpdateDto(BookDto bookDto);
+    BookFormDto toBookUpdateDto(BookDto bookDto);
 
     default Set<Long> mapGenres(List<GenreDto> genres) {
         if (genres == null) {
