@@ -108,10 +108,8 @@ class BatchMigrationTest {
     @DisplayName("Проверяет связи книг с авторами")
     void testBookAuthorRelations() {
         List<MongoBook> books = mongoTemplate.findAll(MongoBook.class, "books");
-
-        Assertions.assertThat(books)
-                .isNotNull()
-                .isNotEmpty()
+        
+        Assertions.assertThat(books).isNotNull().hasSizeGreaterThan(0)
                 .allMatch(book -> book.getAuthor() != null && book.getAuthor().getId() != null);
     }
 
@@ -154,11 +152,7 @@ class BatchMigrationTest {
     @DisplayName("Проверяет структуру комментариев")
     void testCommentsStructure() {
         List<MongoComment> comments = mongoTemplate.findAll(MongoComment.class, "comments");
-
-
-        Assertions.assertThat(comments)
-                .isNotNull()
-                .isNotEmpty()
+                Assertions.assertThat(comments).isNotNull().hasSizeGreaterThan(0)
                 .allMatch(comment -> comment.getText() != null && !comment.getText().isEmpty());
     }
 
