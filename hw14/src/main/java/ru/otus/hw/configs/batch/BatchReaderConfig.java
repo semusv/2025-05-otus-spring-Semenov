@@ -11,8 +11,11 @@ import ru.otus.hw.models.h2.Comment;
 import ru.otus.hw.models.h2.Genre;
 
 import javax.sql.DataSource;
-import java.util.Collections;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Configuration
@@ -22,6 +25,8 @@ public class BatchReaderConfig {
     public BatchReaderConfig(DataSource dataSource) {
         this.dataSource = dataSource;
     }
+
+
 
     @Bean
     public JdbcCursorItemReader<Author> authorReader() {
@@ -38,22 +43,41 @@ public class BatchReaderConfig {
         return new JdbcCursorItemReaderBuilder<Book>()
                 .name("bookReader")
                 .dataSource(dataSource)
-                .sql("SELECT b.id, b.title, b.author_id " +
-                     "FROM books b ")
-                .rowMapper((rs, rowNum) -> {
-                    Book book = new Book();
-                    book.setId(rs.getLong("id"));
-                    book.setTitle(rs.getString("title"));
-
-                    Author author = new Author();
-                    author.setId(rs.getLong("author_id"));
-                    book.setAuthor(author);
-
-                    book.setGenres(Collections.emptyList());
-
-                    return book;
-                })
+                .sql("SELECT b.id, b.title, b.author_id, a.full_name, " +
+                     "GROUP_CONCAT(bg.genre_id) as genre_ids " + // Агрегируем ID жанров
+                     "FROM books b " +
+                     "LEFT JOIN authors a ON b.author_id = a.id " +
+                     "LEFT JOIN books_genres bg ON b.id = bg.book_id " +
+                     "GROUP BY b.id, b.title, b.author_id, a.full_name " + // Группируем по книге
+                     "ORDER BY b.id")
+                .rowMapper(BatchReaderConfig::mapBookRow)
                 .build();
+    }
+
+    private static Book mapBookRow(ResultSet rs, int rowNum) throws SQLException {
+        Book book = new Book();
+        book.setId(rs.getLong("id"));
+        book.setTitle(rs.getString("title"));
+
+        Author author = new Author();
+        author.setId(rs.getLong("author_id"));
+        author.setFullName(rs.getString("full_name"));
+        book.setAuthor(author);
+
+        List<Genre> genres = new ArrayList<>();
+        String genreIds = rs.getString("genre_ids");
+        if (genreIds != null && !genreIds.isEmpty()) {
+            String[] ids = genreIds.split(",");
+            for (String id : ids) {
+                if (!id.trim().isEmpty()) {
+                    Genre genre = new Genre();
+                    genre.setId(Long.parseLong(id.trim()));
+                    genres.add(genre);
+                }
+            }
+        }
+        book.setGenres(genres);
+        return book;
     }
 
     @Bean

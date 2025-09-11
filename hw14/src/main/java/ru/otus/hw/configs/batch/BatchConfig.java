@@ -2,9 +2,6 @@ package ru.otus.hw.configs.batch;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.types.ObjectId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.ChunkListener;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -37,10 +34,8 @@ import ru.otus.hw.models.mongo.MongoComment;
 import ru.otus.hw.models.mongo.MongoGenre;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 @Configuration
 @Slf4j
@@ -52,26 +47,17 @@ public class BatchConfig {
     private final PlatformTransactionManager transactionManager;
 
 
-    private final Logger logger = LoggerFactory.getLogger("Batch");
-
     /* ---------- Кэши ---------- */
-    private final Map<Long, MongoAuthor> authorCache = new ConcurrentHashMap<>();
-
     private final Map<Long, MongoGenre> genreCache = new ConcurrentHashMap<>();
-
-    private final Map<Long, String> bookIdCache = new ConcurrentHashMap<>();
-
-    private final Map<Long, List<Long>> bookGenresCache = new ConcurrentHashMap<>();
 
 
     /* ---------- Processors ---------- */
     @Bean
     public ItemProcessor<Author, MongoAuthor> authorProcessor() {
         return author -> {
-            MongoAuthor mo = new MongoAuthor(author.getFullName());
-            mo.setId(new ObjectId().toString());
-            authorCache.put(author.getId(), mo);
-            return mo;
+            MongoAuthor ma = new MongoAuthor(author.getFullName());
+            ma.setId(String.valueOf(author.getId()));
+            return ma;
         };
     }
 
@@ -79,44 +65,41 @@ public class BatchConfig {
     public ItemProcessor<Genre, MongoGenre> genreProcessor() {
         return genre -> {
             MongoGenre mg = new MongoGenre(genre.getName());
-            mg.setId(new ObjectId().toString());
+            mg.setId(String.valueOf(genre.getId()));
             genreCache.put(genre.getId(), mg);
             return mg;
         };
     }
 
-    @Bean
-    public ItemProcessor<Map<String, Object>, Void> bookGenresProcessor() {
-        return item -> {
-            Long bookId = (Long) item.get("book_id");
-            Long genreId = (Long) item.get("genre_id");
-            bookGenresCache.computeIfAbsent(bookId, k -> new CopyOnWriteArrayList<>()).add(genreId);
-            return null;
-        };
-    }
 
     @Bean
     public ItemProcessor<Book, MongoBook> bookProcessor() {
         return book -> {
             MongoBook mongoBook = new MongoBook();
-            mongoBook.setId(ObjectId.get().toString());
-            mongoBook.setAuthor(authorCache.get(book.getAuthor().getId()));
-            mongoBook.setGenres(new ArrayList<>());
-            bookGenresCache.get(book.getId()).forEach(
-                    genreId -> mongoBook.getGenres().add(genreCache.get(genreId)));
+            mongoBook.setId(String.valueOf(book.getId()));
             mongoBook.setTitle(book.getTitle());
 
-            bookIdCache.put(book.getId(), mongoBook.getId());
+            MongoAuthor mongoAuthor = new MongoAuthor(book.getAuthor().getFullName());
+            mongoAuthor.setId(String.valueOf(book.getAuthor().getId()));
+            mongoBook.setAuthor(mongoAuthor);
+
+            mongoBook.setGenres(new ArrayList<>());
+            if (book.getGenres() != null) {
+                book.getGenres().forEach(genre ->
+                        mongoBook.getGenres().add(genreCache.get(genre.getId())));
+            }
             return mongoBook;
         };
     }
 
     @Bean
     public ItemProcessor<Comment, MongoComment> commentProcessor() {
-        return comment -> new MongoComment(
-                comment.getText(),
-                bookIdCache.get(comment.getBook().getId())
-        );
+        return comment -> {
+            MongoComment mongoComment = new MongoComment();
+            mongoComment.setText(comment.getText());
+            mongoComment.setBookId(String.valueOf(comment.getBook().getId()));
+            return mongoComment;
+        };
     }
 
     /* ---------- Шаги ---------- */
@@ -132,17 +115,17 @@ public class BatchConfig {
                 .listener(new ChunkListener() {
                     @Override
                     public void beforeChunk(@NonNull ChunkContext chunkContext) {
-                        logger.info("Начало пачки Авторов");
+                        log.info("Начало пачки Авторов");
                     }
 
                     @Override
                     public void afterChunk(@NonNull ChunkContext chunkContext) {
-                        logger.info("Конец пачки Авторов");
+                        log.info("Конец пачки Авторов");
                     }
 
                     @Override
                     public void afterChunkError(@NonNull ChunkContext chunkContext) {
-                        logger.info("Ошибка пачки Авторов");
+                        log.info("Ошибка пачки Авторов");
                     }
                 })
                 .build();
@@ -160,49 +143,22 @@ public class BatchConfig {
                 .listener(new ChunkListener() {
                     @Override
                     public void beforeChunk(@NonNull ChunkContext chunkContext) {
-                        logger.info("Начало пачки Жанров");
+                        log.info("Начало пачки Жанров");
                     }
 
                     @Override
                     public void afterChunk(@NonNull ChunkContext chunkContext) {
-                        logger.info("Конец пачки Жанров");
+                        log.info("Конец пачки Жанров");
                     }
 
                     @Override
                     public void afterChunkError(@NonNull ChunkContext chunkContext) {
-                        logger.info("Ошибка пачки Жанров");
+                        log.info("Ошибка пачки Жанров");
                     }
                 })
                 .build();
     }
 
-    @Bean(name = "bookGenresStep")
-    public Step migrateBookGenresStep(JdbcCursorItemReader<Map<String, Object>> reader,
-                                      ItemProcessor<Map<String, Object>, Void> processor) {
-        return new StepBuilder("migrateBookGenresStep", jobRepository)
-                .<Map<String, Object>, Void>chunk(10, transactionManager)
-                .reader(reader)
-                .processor(processor)
-                .writer(items -> {
-                })
-                .listener(new ChunkListener() {
-                    @Override
-                    public void beforeChunk(@NonNull ChunkContext chunkContext) {
-                        logger.info("Начало пачки Связки книг-жанров");
-                    }
-
-                    @Override
-                    public void afterChunk(@NonNull ChunkContext chunkContext) {
-                        logger.info("Конец пачки Связки книг-жанров");
-                    }
-
-                    @Override
-                    public void afterChunkError(@NonNull ChunkContext chunkContext) {
-                        logger.info("Ошибка пачки Связки книг-жанров");
-                    }
-                })
-                .build();
-    }
 
     @Bean(name = "booksStep")
     public Step migrateBooksStep(JdbcCursorItemReader<Book> bookReader,
@@ -216,17 +172,17 @@ public class BatchConfig {
                 .listener(new ChunkListener() {
                     @Override
                     public void beforeChunk(@NonNull ChunkContext chunkContext) {
-                        logger.info("Начало пачки Книг");
+                        log.info("Начало пачки Книг");
                     }
 
                     @Override
                     public void afterChunk(@NonNull ChunkContext chunkContext) {
-                        logger.info("Конец пачки Книг");
+                        log.info("Конец пачки Книг");
                     }
 
                     @Override
                     public void afterChunkError(@NonNull ChunkContext chunkContext) {
-                        logger.info("Ошибка пачки Книг");
+                        log.info("Ошибка пачки Книг");
                     }
                 })
                 .build();
@@ -244,17 +200,17 @@ public class BatchConfig {
                 .listener(new ChunkListener() {
                     @Override
                     public void beforeChunk(@NonNull ChunkContext chunkContext) {
-                        logger.info("Начало пачки Комментариев");
+                        log.info("Начало пачки Комментариев");
                     }
 
                     @Override
                     public void afterChunk(@NonNull ChunkContext chunkContext) {
-                        logger.info("Конец пачки Комментариев");
+                        log.info("Конец пачки Комментариев");
                     }
 
                     @Override
                     public void afterChunkError(@NonNull ChunkContext chunkContext) {
-                        logger.info("Ошибка пачки Комментариев");
+                        log.info("Ошибка пачки Комментариев");
                     }
                 })
                 .build();
@@ -270,10 +226,7 @@ public class BatchConfig {
     @Bean
     public Tasklet cleanUpTasklet() {
         return (contribution, chunkContext) -> {
-            authorCache.clear();
             genreCache.clear();
-            bookGenresCache.clear();
-            bookIdCache.clear();
             return RepeatStatus.FINISHED;
         };
     }
@@ -281,8 +234,7 @@ public class BatchConfig {
     @Bean(name = "parallelFlow")
     public Flow parallelFlow(
             @Qualifier("authorsStep") Step migrateAuthorsStep,
-            @Qualifier("genresStep") Step migrateGenresStep,
-            @Qualifier("bookGenresStep") Step migrateBookGenresStep
+            @Qualifier("genresStep") Step migrateGenresStep
     ) {
         Flow authorsFlow = new FlowBuilder<Flow>("authorsFlow")
                 .start(migrateAuthorsStep)
@@ -292,13 +244,9 @@ public class BatchConfig {
                 .start(migrateGenresStep)
                 .build();
 
-        Flow bookGenresFlow = new FlowBuilder<Flow>("bookGenresFlow")
-                .start(migrateBookGenresStep)
-                .build();
-
         return new FlowBuilder<SimpleFlow>("parallelFlow")
                 .split(new SimpleAsyncTaskExecutor())
-                .add(authorsFlow, genresFlow, bookGenresFlow)
+                .add(authorsFlow, genresFlow)
                 .build();
     }
 
