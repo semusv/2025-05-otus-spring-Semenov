@@ -1,0 +1,39 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2025-08-23--0005-users-data
+      author: vvsemenov
+      context: test
+      runOnChange: true
+      changes:
+        - loadData:
+            file: csv/2025-08-23--0005-users.csv
+            relativeToChangelogFile: true
+            separator: ";"
+            quotchar: '"'
+            encoding: UTF-8
+            tableName: users
+            primaryKey: id
+            columns:
+              - column:
+                  name: username
+              - column:
+                  name: password
+
+  - changeSet:
+      id: 2025-08-23--0006-user-roles-data
+      author: vvsemenov
+      context: test
+      runOnChange: true
+      changes:
+        - loadData:
+            file: csv/2025-08-23--0006-user-roles.csv
+            relativeToChangelogFile: true
+            separator: ";"
+            quotchar: '"'
+            encoding: UTF-8
+            tableName: user_roles
+            columns:
+              - column:
+                  name: user_id
+              - column:
+                  name: role
