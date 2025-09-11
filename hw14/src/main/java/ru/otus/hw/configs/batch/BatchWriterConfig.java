@@ -10,7 +10,7 @@ import ru.otus.hw.models.mongo.MongoComment;
 import ru.otus.hw.models.mongo.MongoGenre;
 
 @Configuration
-public class BatchWrierConfig {
+public class BatchWriterConfig {
 
     @Bean
     public MongoItemWriter<MongoAuthor> authorWriter(MongoTemplate mongoTemplate) {

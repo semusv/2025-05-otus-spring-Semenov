@@ -1,9 +1,18 @@
 spring:
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
-      - org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration
-      - org.springframework.boot.autoconfigure.data.mongo.MongoRepositoriesAutoConfiguration
+  batch:
+    job:
+      enabled: false
+  output:
+    ansi:
+      enabled: ALWAYS
+  data:
+    mongodb:
+      host: localhost
+      port: 0
+      database: book_library_test
+      embedded:
+        enabled: true
+        version: 4.0.2
 
   datasource:
     url: jdbc:h2:mem:testdb
@@ -22,8 +31,18 @@ spring:
       hibernate:
         format_sql: true
 
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 4.0.2
+
+mongock:
+  enabled: false
+
 logging:
   level:
     ROOT: ERROR
-
+    de.flapdoodle.embed: DEBUG
+    org.springframework.data.mongodb: TRACE
 
