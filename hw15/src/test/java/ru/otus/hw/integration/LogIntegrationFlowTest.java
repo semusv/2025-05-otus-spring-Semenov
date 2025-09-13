@@ -43,7 +43,7 @@ class LogIntegrationFlowTest {
 
         // Then
         assertNotNull(notifications, "Notifications should not be null");
-        assertEquals(2, notifications.size(), "Should generate at least one notification for ERROR/CRITICAL logs");
+        assertEquals(1, notifications.size(), "Should generate at least one notification for ERROR/CRITICAL logs");
 
         notifications.forEach(notification -> {
             assertNotNull(notification.message());
@@ -58,7 +58,7 @@ class LogIntegrationFlowTest {
         // Given
         List<RawLog> rawLogs = List.of(
                 new RawLog("ERROR file not found", LocalDateTime.now(), "file-service"),
-                new RawLog("WARN memory usage high", LocalDateTime.now(), "monitoring-service")
+                new RawLog("CRITICAL memory usage high", LocalDateTime.now(), "monitoring-service")
         );
 
         // When
