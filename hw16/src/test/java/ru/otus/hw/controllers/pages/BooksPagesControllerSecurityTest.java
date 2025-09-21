@@ -91,7 +91,7 @@ class BooksPagesControllerSecurityTest {
     @ParameterizedTest
     @MethodSource("lockedUrlsWithRoles")
     @DisplayName("должен вернуть OK, если пользователь с ролью User ")
-    @WithMockUser(username = "user" , roles = {"USER"})
+    @WithMockUser(username = "user" )
     void shouldOkUrlEndpointUserAuthorized(String endpoint) throws Exception {
         mockMvc.perform(get(endpoint)).andExpect(status().isOk());
     }

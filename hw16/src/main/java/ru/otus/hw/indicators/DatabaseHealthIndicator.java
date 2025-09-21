@@ -59,8 +59,4 @@ public class DatabaseHealthIndicator implements HealthIndicator {
             return false;
         }
     }
-
-    public Health getLastStatus() {
-        return lastHealthStatus.get();
-    }
 }
