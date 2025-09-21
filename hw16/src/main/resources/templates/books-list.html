@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<!--suppress HtmlUnknownAttribute -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title th:text="#{page.title.library}"></title>
+    <meta name="description" th:content="#{book.description.prefix}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Подключаем Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+            href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Playfair+Display:wght@400;500&display=swap"
+            rel="stylesheet">
+
+    <link th:href="@{/css/style.css}" rel="stylesheet" href="../static/css/style.css">
+</head>
+
+<body>
+
+
+<div class="container">
+
+    <div class="header-row">
+        <!-- Хлебные крошки -->
+        <nav class="breadcrumbs" aria-label="breadcrumbs">
+            <span class="breadcrumb-current" th:text="#{breadcrumb.home}">Главная</span>
+        </nav>
+
+        <div class="language-switcher">
+                <span th:classappend="${#locale.language == 'en' ? 'active' : ''}">
+                    <a href="#" th:href="@{/(lang=en)}" th:text="#{language-switcher-en}">EN</a>
+                </span>
+            <span class="separator">|</span>
+            <span th:classappend="${#locale.language == 'ru' ? 'active' : ''}">
+                    <a href="#" th:href="@{/(lang=ru)}" th:text="#{language-switcher-ru}">RU</a>
+                </span>
+        </div>
+        <nav sec:authorize="isAuthenticated()"  aria-label="logout">
+            <form th:action="@{/logout}" method="post" class="logout-form">
+                <button type="submit" class="btn btn-logout" th:text="#{button.logout}">
+                    Выйти
+                </button>
+            </form>
+        </nav>
+    </div>
+
+    <h1 th:text="#{books-list.header}">Каталог книг</h1>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th th:text="#{table.header.number}">№</th>
+            <th th:text="#{table.header.title}">Название</th>
+            <th th:text="#{table.header.author}">Автор</th>
+            <th th:text="#{table.header.genres}">Жанры</th>
+        </tr>
+        </thead>
+
+        <tbody id="books-table-body"></tbody>
+    </table>
+
+
+    <div class="book-header">
+        <div class="book-actions">
+            <a th:href="@{'/books/new'}" href="book-edit.html" class="btn btn-success" th:text="#{button.add-book}">
+                Добавить книгу
+            </a>
+            <a th:href="@{'/authors'}" href="authors-list.html" class="btn btn-primary"
+               th:text="#{button.authors-list}">
+                Список авторов
+            </a>
+            <a th:href="@{'/genres'}" href="genres-list.html" class="btn btn-primary"
+               th:text="#{button.genres-list}">
+                Список жанров
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="notification-container" id="notification-container"></div>
+
+<script type="module" src="../static/js/ui/books-list.js" th:src="@{/js/ui/books-list.js}"></script>
+</body>
+
+</html>

@@ -1,0 +1,71 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2025-07-06--0001-authors-data
+      author: vvsemenov
+      context: test
+      runOnChange: true
+      changes:
+        - loadData:
+            file: csv/2025-07-06--0001-authors.csv
+            relativeToChangelogFile: true
+            separator: ";"
+            quotchar: '"'
+            encoding: UTF-8
+            tableName: authors
+            primaryKey: id
+            columns:
+              - column:
+                  name: full_name
+
+  - changeSet:
+      id: 2025-07-06--0001-genres-data
+      author: vvsemenov
+      context: test
+      runOnChange: true
+      changes:
+        - loadData:
+            file: csv/2025-07-06--0001-genres.csv
+            relativeToChangelogFile: true
+            separator: ";"
+            quotchar: '"'
+            encoding: UTF-8
+            tableName: genres
+            primaryKey: id
+            columns:
+              - column:
+                  name: name
+
+  - changeSet:
+      id: 2025-07-06--0001-books-data
+      author: vvsemenov
+      context: test
+      runOnChange: true
+      changes:
+        - loadData:
+            file: csv/2025-07-06--0001-books.csv
+            relativeToChangelogFile: true
+            separator: ';'
+            quotChar: '"'
+            encoding: UTF-8
+            tableName: books
+            columns:
+              - column:
+                  name: title
+              - column:
+                  name: author_id
+
+  - changeSet:
+      id: 2025-07-06--0001-books_genres-data
+      author: vvsemenov
+      context: test
+      runOnChange: true
+      changes:
+        - loadData:
+            file: csv/2025-07-06--0001-books_genres.csv
+            relativeToChangelogFile: true
+            separator: ";"
+            quotchar: '"'
+            encoding: UTF-8
+            tableName: books_genres
+            primaryKey: book_id, genre_id
+
