@@ -33,6 +33,9 @@ management:
             requests: true
 
 spring:
+  data:
+    rest:
+      base-path: /datarest
   jmx:
     enabled: true
   mvc:
