@@ -7,14 +7,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.time.LocalDateTime;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Component
 public class DatabaseHealthIndicator implements HealthIndicator {
 
     private final JdbcTemplate jdbcTemplate;
-
-    private final AtomicReference<Health> lastHealthStatus = new AtomicReference<>();
 
     public DatabaseHealthIndicator(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -24,7 +21,7 @@ public class DatabaseHealthIndicator implements HealthIndicator {
     public Health health() {
         try {
             jdbcTemplate.queryForObject("SELECT 1 FROM DUAL", Integer.class);
-            Health health = Health.up()
+            return Health.up()
                     .withDetail("database", "H2 In-Memory")
                     .withDetail("status", "connected")
                     .withDetail("timestamp", LocalDateTime.now())
@@ -32,18 +29,14 @@ public class DatabaseHealthIndicator implements HealthIndicator {
                     .withDetail("tables.authors", checkTableExists("AUTHORS") ? "exists" : "missing")
                     .withDetail("tables.genres", checkTableExists("GENRES") ? "exists" : "missing")
                     .build();
-            lastHealthStatus.set(health);
-            return health;
         } catch (Exception e) {
-            Health health = Health.down()
+            return Health.down()
                     .withDetail("database", "H2 In-Memory")
                     .withDetail("status", "connection failed")
                     .withDetail("error", e.getMessage())
                     .withDetail("timestamp", LocalDateTime.now())
                     .withDetail("exception_type", e.getClass().getSimpleName())
                     .build();
-            lastHealthStatus.set(health);
-            return health;
         }
     }
 
@@ -59,4 +52,5 @@ public class DatabaseHealthIndicator implements HealthIndicator {
             return false;
         }
     }
+
 }
