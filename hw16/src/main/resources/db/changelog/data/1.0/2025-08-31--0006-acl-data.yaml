@@ -1,0 +1,169 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2025-08-31--0001-acl-initial-data
+      author: vvsemenov
+      context: dev
+      comment: Предзаполнение данных ACL - классы и SID
+      changes:
+        # Добавляем классы защищаемых объектов
+        - insert:
+            tableName: acl_class
+            columns:
+              - column:
+                  name: class
+                  value: ru.otus.hw.models.Book
+        - insert:
+            tableName: acl_class
+            columns:
+              - column:
+                  name: class
+                  value: ru.otus.hw.models.Comment
+
+        # Добавляем SID для пользователей
+        - insert:
+            tableName: acl_sid
+            columns:
+              - column:
+                  name: principal
+                  value: true
+              - column:
+                  name: sid
+                  value: user
+        - insert:
+            tableName: acl_sid
+            columns:
+              - column:
+                  name: principal
+                  value: true
+              - column:
+                  name: sid
+                  value: admin
+
+        # Добавляем SID для ролей
+        - insert:
+            tableName: acl_sid
+            columns:
+              - column:
+                  name: principal
+                  value: false
+              - column:
+                  name: sid
+                  value: ROLE_USER
+        - insert:
+            tableName: acl_sid
+            columns:
+              - column:
+                  name: principal
+                  value: false
+              - column:
+                  name: sid
+                  value: ROLE_ADMIN
+        - insert:
+            tableName: acl_sid
+            columns:
+              - column:
+                  name: principal
+                  value: false
+              - column:
+                  name: sid
+                  value: ROLE_GUEST
+        - insert:
+            tableName: acl_sid
+            columns:
+              - column:
+                  name: principal
+                  value: true
+              - column:
+                  name: sid
+                  value: guest
+        - insert:
+            tableName: acl_sid
+            columns:
+              - column:
+                  name: principal
+                  value: true
+              - column:
+                  name: sid
+                  value: user1
+        - insert:
+            tableName: acl_sid
+            columns:
+              - column:
+                  name: principal
+                  value: true
+              - column:
+                  name: sid
+                  value: user2
+  - changeSet:
+      id: 2025-08-31--0002-acl-book-permissions
+      author: vvsemenov
+      context: dev
+      comment: Настройка прав доступа на книги
+      changes:
+        # Создаем Object Identity для книг
+        - sql:
+            sql: |
+              INSERT INTO acl_object_identity (object_id_class, object_id_identity, owner_sid, entries_inheriting)
+              VALUES 
+              
+              ((SELECT id FROM acl_class WHERE class = 'ru.otus.hw.models.Book'), 1, 
+               (SELECT id FROM acl_sid WHERE sid = 'user' AND principal = true), true),
+              
+              ((SELECT id FROM acl_class WHERE class = 'ru.otus.hw.models.Book'), 2, 
+               (SELECT id FROM acl_sid WHERE sid = 'user' AND principal = true), true),
+              
+              ((SELECT id FROM acl_class WHERE class = 'ru.otus.hw.models.Book'), 3, 
+               (SELECT id FROM acl_sid WHERE sid = 'user' AND principal = true), true);
+
+        # Создаем Object Identity для комментариев
+        - sql:
+            sql: |
+              INSERT INTO acl_object_identity (object_id_class, object_id_identity, owner_sid, entries_inheriting)
+              VALUES
+              -- Коммент 1
+              ((SELECT id FROM acl_class WHERE class = 'ru.otus.hw.models.Comment'), 1,
+               (SELECT id FROM acl_sid WHERE sid = 'user' AND principal = true), true),
+              -- Коммент 2
+              ((SELECT id FROM acl_class WHERE class = 'ru.otus.hw.models.Comment'), 2,
+               (SELECT id FROM acl_sid WHERE sid = 'user' AND principal = true), true),
+              -- Коммент 3
+              ((SELECT id FROM acl_class WHERE class = 'ru.otus.hw.models.Comment'), 3,
+               (SELECT id FROM acl_sid WHERE sid = 'user' AND principal = true), true),
+              -- Коммент 4
+              ((SELECT id FROM acl_class WHERE class = 'ru.otus.hw.models.Comment'), 4,
+               (SELECT id FROM acl_sid WHERE sid = 'user' AND principal = true), true);
+        #
+
+        # Добавляем права доступа
+        - sql:
+            sql: |
+              INSERT INTO acl_entry (acl_object_identity, ace_order, sid, mask, granting, audit_success, audit_failure)
+              SELECT
+                  aoi.id,  
+                  ROW_NUMBER() OVER (PARTITION BY aoi.id ORDER BY mask_values.mask) - 1,
+                  (SELECT id FROM acl_sid WHERE sid = 'user' AND principal = true),
+                  mask_values.mask,
+                  true, 
+                  true, 
+                  true
+                FROM  acl_object_identity aoi,
+                (VALUES (8), (2)) AS mask_values(mask)
+                WHERE aoi.object_id_identity IN (1, 2, 3)
+                  AND aoi.object_id_class = (SELECT id FROM acl_class WHERE class = 'ru.otus.hw.models.Book');
+
+        # Добавляем права доступа для комментариев
+        - sql:
+            sql: |
+              INSERT INTO acl_entry (acl_object_identity, ace_order, sid, mask, granting, audit_success, audit_failure)
+              SELECT
+                  aoi.id,  
+                  ROW_NUMBER() OVER (PARTITION BY aoi.id ORDER BY mask_values.mask) - 1,
+                  (SELECT id FROM acl_sid WHERE sid = 'user' AND principal = true),
+                  mask_values.mask,
+                  true, 
+                  true, 
+                  true
+                FROM  acl_object_identity aoi,
+                (VALUES (8), (2)) AS mask_values(mask)
+                WHERE aoi.object_id_identity IN (1, 2, 3, 4)
+                  AND aoi.object_id_class = (SELECT id FROM acl_class WHERE class = 'ru.otus.hw.models.Comment');
