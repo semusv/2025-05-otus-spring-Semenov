@@ -25,6 +25,7 @@ import java.util.stream.Stream;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@SuppressWarnings("unused")
 @WebMvcTest(controllers = {
         BooksPagesController.class,
         CustomAccessDeniedHandler.class

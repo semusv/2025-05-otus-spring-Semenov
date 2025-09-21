@@ -1,3 +1,4 @@
+#file: noinspection YAMLIncompatibleTypes
 databaseChangeLog:
   - changeSet:
       id: 2025-08-31--0001-acl-initial-data

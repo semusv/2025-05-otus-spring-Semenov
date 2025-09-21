@@ -24,18 +24,13 @@ public class DatabaseHealthIndicator implements HealthIndicator {
     public Health health() {
         try {
             jdbcTemplate.queryForObject("SELECT 1 FROM DUAL", Integer.class);
-            // Проверяем наличие основных таблиц
-            boolean booksTableExists = checkTableExists("BOOKS");
-            boolean authorsTableExists = checkTableExists("AUTHORS");
-            boolean genresTableExists = checkTableExists("GENRES");
-
             Health health = Health.up()
                     .withDetail("database", "H2 In-Memory")
                     .withDetail("status", "connected")
                     .withDetail("timestamp", LocalDateTime.now())
-                    .withDetail("tables.books", booksTableExists ? "exists" : "missing")
-                    .withDetail("tables.authors", authorsTableExists ? "exists" : "missing")
-                    .withDetail("tables.genres", genresTableExists ? "exists" : "missing")
+                    .withDetail("tables.books", checkTableExists("BOOKS") ? "exists" : "missing")
+                    .withDetail("tables.authors", checkTableExists("AUTHORS") ? "exists" : "missing")
+                    .withDetail("tables.genres", checkTableExists("GENRES") ? "exists" : "missing")
                     .build();
             lastHealthStatus.set(health);
             return health;

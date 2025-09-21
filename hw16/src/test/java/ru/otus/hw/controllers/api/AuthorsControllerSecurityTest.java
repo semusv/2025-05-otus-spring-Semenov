@@ -28,6 +28,7 @@ import java.util.stream.Stream;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@SuppressWarnings("unused")
 @WebMvcTest(controllers = {
         AuthorsController.class
 })
