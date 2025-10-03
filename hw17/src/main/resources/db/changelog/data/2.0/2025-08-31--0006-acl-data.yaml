@@ -1,0 +1,84 @@
+# file: noinspection YAMLIncompatibleTypes
+databaseChangeLog:
+  - changeSet:
+      id: 2025-10-03--0001-acl-initial-data
+      author: vvsemenov
+      context: dev
+      comment: Предзаполнение данных ACL - классы и SID
+      changes:
+        # Добавляем классы защищаемых объектов
+        - insert:
+            tableName: acl_class
+            columns:
+              - column:
+                  name: class
+                  value: ru.otus.hw.models.Book
+        - insert:
+            tableName: acl_class
+            columns:
+              - column:
+                  name: class
+                  value: ru.otus.hw.models.Comment
+
+        # Добавляем SID для пользователей
+        - insert:
+            tableName: acl_sid
+            columns:
+              - column:
+                  name: principal
+                  value: true
+              - column:
+                  name: sid
+                  value: user
+        - insert:
+            tableName: acl_sid
+            columns:
+              - column:
+                  name: principal
+                  value: true
+              - column:
+                  name: sid
+                  value: admin
+        - insert:
+            tableName: acl_sid
+            columns:
+              - column:
+                  name: principal
+                  value: false
+              - column:
+                  name: sid
+                  value: ROLE_USER
+        - insert:
+            tableName: acl_sid
+            columns:
+              - column:
+                  name: principal
+                  value: false
+              - column:
+                  name: sid
+                  value: ROLE_ADMIN
+
+  - changeSet:
+      id: 2025-08-31--0002-acl-book-permissions-fixed
+      author: vvsemenov
+      context: dev
+      comment: Настройка прав доступа на книги (исправленная версия)
+      changes:
+        # Создаем Object Identity для книг - УПРОЩЕННАЯ ВЕРСИЯ
+        - sql:
+            sql: |
+              INSERT INTO acl_object_identity (object_id_class, object_id_identity, owner_sid, entries_inheriting)
+              VALUES 
+              ((SELECT id FROM acl_class WHERE class = 'ru.otus.hw.models.Book'), 1, (SELECT id FROM acl_sid WHERE sid = 'user' AND principal = true), true),
+              ((SELECT id FROM acl_class WHERE class = 'ru.otus.hw.models.Book'), 2, (SELECT id FROM acl_sid WHERE sid = 'user' AND principal = true), true),
+              ((SELECT id FROM acl_class WHERE class = 'ru.otus.hw.models.Book'), 3, (SELECT id FROM acl_sid WHERE sid = 'user' AND principal = true), true);
+
+        # Создаем Object Identity для комментариев - УПРОЩЕННАЯ ВЕРСИЯ
+        - sql:
+            sql: |
+              INSERT INTO acl_object_identity (object_id_class, object_id_identity, owner_sid, entries_inheriting)
+              VALUES
+              ((SELECT id FROM acl_class WHERE class = 'ru.otus.hw.models.Comment'), 1, (SELECT id FROM acl_sid WHERE sid = 'user' AND principal = true), true),
+              ((SELECT id FROM acl_class WHERE class = 'ru.otus.hw.models.Comment'), 2, (SELECT id FROM acl_sid WHERE sid = 'user' AND principal = true), true),
+              ((SELECT id FROM acl_class WHERE class = 'ru.otus.hw.models.Comment'), 3, (SELECT id FROM acl_sid WHERE sid = 'user' AND principal = true), true),
+              ((SELECT id FROM acl_class WHERE class = 'ru.otus.hw.models.Comment'), 4, (SELECT id FROM acl_sid WHERE sid = 'user' AND principal = true), true);

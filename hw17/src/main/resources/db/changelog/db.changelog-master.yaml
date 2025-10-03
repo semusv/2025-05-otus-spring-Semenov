@@ -1,0 +1,9 @@
+databaseChangeLog:
+  # Структурные изменения
+  - includeAll:
+      path: db/changelog/structure/2.0/
+
+  # Данные
+  - includeAll:
+      path: db/changelog/data/2.0/
+      context: dev

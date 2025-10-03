@@ -1,0 +1,91 @@
+server:
+  error:
+    whitelabel:
+      enabled: false
+    path: "/error"
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+      base-path: "/actuator"
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+    metrics:
+      enabled: true
+    logfile:
+      enabled: true
+  health:
+    defaults:
+      enabled: true
+  metrics:
+    export:
+      simple:
+        enabled: true
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
+
+spring:
+  data:
+    rest:
+      base-path: /datarest
+  jmx:
+    enabled: true
+  mvc:
+    throw-exception-if-no-handler-found: true
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
+  thymeleaf:
+    cache: false
+  messages:
+    baseName: messages
+    encoding: UTF-8
+    # Не дает свалиться в системную локаль если не найден файл для переданной в MessageSource
+    # Если false то будут браться сообщения из дефолтного файла, если true, то из файла соответствующего системной локали
+    fallbackToSystemLocale: false
+  output:
+    ansi:
+      enabled: ALWAYS
+
+  datasource:
+#    url: jdbc:h2:mem:maindb
+    driver-class-name: org.postgresql.Driver
+#    password: ${SPRING_DATASOURCE_PASSWORD}
+#    username: ${SPRING_DATASOURCE_USERNAME}
+#    url: ${SPRING_DATASOURCE_URL}
+  liquibase:
+    enabled: true
+    contexts: dev
+
+
+  jpa:
+#    database-platform: org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    generate-ddl: false
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+app:
+  templates:
+    error: "static/error-template.txt"
+
+logging:
+  file:
+    name: application.log
+    path: ./logs
+  level:
+    org.springframework.web: INFO
+    ru.otus.hw: DEBUG
