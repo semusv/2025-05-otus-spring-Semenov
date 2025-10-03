@@ -60,9 +60,9 @@ spring:
   datasource:
 #    url: jdbc:h2:mem:maindb
     driver-class-name: org.postgresql.Driver
-    password: ${SPRING_DATASOURCE_PASSWORD}
-    username: ${SPRING_DATASOURCE_USERNAME}
-    url: ${SPRING_DATASOURCE_URL}
+#    password: ${SPRING_DATASOURCE_PASSWORD}
+#    username: ${SPRING_DATASOURCE_USERNAME}
+#    url: ${SPRING_DATASOURCE_URL}
   liquibase:
     enabled: true
     contexts: dev
