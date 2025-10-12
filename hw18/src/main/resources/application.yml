@@ -1,10 +1,71 @@
 server:
+  port: 8080
   error:
     whitelabel:
       enabled: false
     path: "/error"
 
+# Resilience4j Configuration
+resilience4j:
+  circuitbreaker:
+    instances:
+      bookService:
+        register-health-indicator: true
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 10
+        minimum-number-of-calls: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
+        automatic-transition-from-open-to-half-open-enabled: true
 
+      getBookById:
+        register-health-indicator: true
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 5
+        minimum-number-of-calls: 3
+        failure-rate-threshold: 40
+        wait-duration-in-open-state: 5s
+
+      getAllBooks:
+        register-health-indicator: true
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 8
+        minimum-number-of-calls: 4
+        failure-rate-threshold: 60
+        wait-duration-in-open-state: 8s
+
+  timelimiter:
+    instances:
+      bookService:
+        timeout-duration: 3s
+      getBookById:
+        timeout-duration: 2s
+      getAllBooks:
+        timeout-duration: 4s
+
+  retry:
+    instances:
+      bookService:
+        max-attempts: 3
+        wait-duration: 500ms
+        enable-exponential-backoff: true
+        exponential-backoff-multiplier: 2
+
+  bulkhead:
+    instances:
+      bookService:
+        max-concurrent-calls: 5
+        max-wait-duration: 100ms
+
+  ratelimiter:
+    instances:
+      bookService:
+        limit-for-period: 10
+        limit-refresh-period: 1s
+        timeout-duration: 0
+
+# Actuator Configuration
 management:
   endpoints:
     web:
@@ -19,6 +80,9 @@ management:
       enabled: true
     logfile:
       enabled: true
+    hystrix:
+      stream:
+        enabled: true
   health:
     defaults:
       enabled: true
@@ -33,6 +97,8 @@ management:
             requests: true
 
 spring:
+  application:
+    name: book-service-VVS  # важно для Turbine!
   data:
     rest:
       base-path: /datarest
