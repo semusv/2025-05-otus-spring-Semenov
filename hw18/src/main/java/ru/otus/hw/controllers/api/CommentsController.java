@@ -1,5 +1,7 @@
 package ru.otus.hw.controllers.api;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
@@ -25,6 +27,8 @@ public class CommentsController {
 
     private final CommentService commentService;
 
+    @CircuitBreaker(name = "getCommentsForBookId")
+    @RateLimiter(name = "commentService")
     @GetMapping("/api/books/{id}/comments")
     @ResponseStatus(HttpStatus.OK)
     public List<CommentDto> getCommentsForBookId(
@@ -32,6 +36,8 @@ public class CommentsController {
         return commentService.findByBookId(bookId);
     }
 
+    @CircuitBreaker(name = "addCommentToBook")
+    @RateLimiter(name = "commentService")
     @PostMapping("api/books/{id}/comments")
     @ResponseStatus(HttpStatus.CREATED)
     public CommentDto addCommentToBook(
@@ -40,6 +46,8 @@ public class CommentsController {
         return commentService.insert(commentDto);
     }
 
+    @CircuitBreaker(name = "deleteCommentFromBook")
+    @RateLimiter(name = "commentService")
     @DeleteMapping("api/books/{id}/comments/{commentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCommentFromBook(

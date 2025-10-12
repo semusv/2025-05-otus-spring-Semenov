@@ -1,5 +1,7 @@
 package ru.otus.hw.controllers.api;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +18,8 @@ public class AuthorsController {
 
     private final AuthorService authorService;
 
+    @CircuitBreaker(name = "getAllAuthors")
+    @RateLimiter(name = "authorService")
     @GetMapping("/api/authors")
     @ResponseStatus(HttpStatus.OK)
     public List<AuthorDto> getAllAuthors() {

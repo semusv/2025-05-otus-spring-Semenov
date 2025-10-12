@@ -1,5 +1,7 @@
 package ru.otus.hw.controllers.api;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +17,8 @@ import java.util.List;
 public class GenresController {
     private final GenreService genreService;
 
+    @CircuitBreaker(name = "getAllGenres")
+    @RateLimiter(name = "GenreService")
     @GetMapping("/api/genres")
     @ResponseStatus(HttpStatus.OK)
     public List<GenreDto> getAllGenres() {
