@@ -1,0 +1,221 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1759513172765-14
+      author: vvsemenov
+      comment: Создание таблиц для Spring Security ACL
+      changes:
+        - createTable:
+            tableName: acl_sid
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: principal
+                  type: boolean
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sid
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: acl_class
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: class
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: acl_object_identity
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: object_id_class
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: object_id_identity
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: parent_object
+                  type: bigint
+                  constraints:
+                    nullable: true
+              - column:
+                  name: owner_sid
+                  type: bigint
+                  constraints:
+                    nullable: true
+              - column:
+                  name: entries_inheriting
+                  type: boolean
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: acl_entry
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: acl_object_identity
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: ace_order
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sid
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: mask
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: granting
+                  type: boolean
+                  constraints:
+                    nullable: false
+              - column:
+                  name: audit_success
+                  type: boolean
+                  constraints:
+                    nullable: false
+              - column:
+                  name: audit_failure
+                  type: boolean
+                  constraints:
+                    nullable: false
+
+        # Добавляем внешние ключи отдельно
+        - addForeignKeyConstraint:
+            baseTableName: acl_object_identity
+            baseColumnNames: object_id_class
+            referencedTableName: acl_class
+            referencedColumnNames: id
+            constraintName: fk_acl_obj_class
+
+        - addForeignKeyConstraint:
+            baseTableName: acl_object_identity
+            baseColumnNames: owner_sid
+            referencedTableName: acl_sid
+            referencedColumnNames: id
+            constraintName: fk_acl_obj_owner
+
+        - addForeignKeyConstraint:
+            baseTableName: acl_object_identity
+            baseColumnNames: parent_object
+            referencedTableName: acl_object_identity
+            referencedColumnNames: id
+            constraintName: fk_acl_obj_parent
+
+        - addForeignKeyConstraint:
+            baseTableName: acl_entry
+            baseColumnNames: acl_object_identity
+            referencedTableName: acl_object_identity
+            referencedColumnNames: id
+            constraintName: fk_acl_entry_object
+
+        - addForeignKeyConstraint:
+            baseTableName: acl_entry
+            baseColumnNames: sid
+            referencedTableName: acl_sid
+            referencedColumnNames: id
+            constraintName: fk_acl_entry_sid
+
+        # Уникальные ограничения
+        - addUniqueConstraint:
+            tableName: acl_sid
+            columnNames: sid, principal
+            constraintName: uk_acl_sid
+
+        - addUniqueConstraint:
+            tableName: acl_class
+            columnNames: class
+            constraintName: uk_acl_class
+
+        - addUniqueConstraint:
+            tableName: acl_object_identity
+            columnNames: object_id_class, object_id_identity
+            constraintName: uk_acl_object_identity
+
+        - addUniqueConstraint:
+            tableName: acl_entry
+            columnNames: acl_object_identity, ace_order
+            constraintName: uk_acl_entry
+
+        # Индексы
+        - createIndex:
+            tableName: acl_sid
+            columns:
+              - column:
+                  name: sid
+            indexName: idx_acl_sid_sid
+
+        - createIndex:
+            tableName: acl_object_identity
+            columns:
+              - column:
+                  name: object_id_class
+            indexName: idx_acl_obj_class
+
+        - createIndex:
+            tableName: acl_object_identity
+            columns:
+              - column:
+                  name: parent_object
+            indexName: idx_acl_obj_parent
+
+        - createIndex:
+            tableName: acl_object_identity
+            columns:
+              - column:
+                  name: owner_sid
+            indexName: idx_acl_obj_owner
+
+        - createIndex:
+            tableName: acl_entry
+            columns:
+              - column:
+                  name: acl_object_identity
+            indexName: idx_acl_entry_object
+
+        - createIndex:
+            tableName: acl_entry
+            columns:
+              - column:
+                  name: sid
+            indexName: idx_acl_entry_sid
