@@ -89,7 +89,7 @@ cloud:
   circuitbreaker:
     resilience4j:
       config:
-        # АГРЕССИВНЫЕ НАСТРОЙКИ ДЛЯ ТЕСТИРОВАНИЯ
+        # АГРЕССИВНЫЕ НАСТРОЙКИ
         default:
           circuitBreaker:
             slidingWindowType: COUNT_BASED

@@ -25,7 +25,7 @@ resilience4j:
         slidingWindowType: COUNT_BASED
         slidingWindowSize: 3
         failureRateThreshold: 34
-        waitDurationInOpenState: 500ms  # Еще меньше для тестов
+        waitDurationInOpenState: 500ms
         permittedNumberOfCallsInHalfOpenState: 1
         minimumNumberOfCalls: 1
         slowCallDurationThreshold: 300ms
