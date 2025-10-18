@@ -20,9 +20,3 @@ logging:
   level:
     ROOT: ERROR
 
-#  sql:
-#    init:
-#      mode: always
-#      data-locations: data.sql
-#      schema-locations: schema.sql
-

@@ -99,7 +99,6 @@ class BooksControllerTest {
     private ErrorMessageFormatter errorMessageFormatter;
 
 
-
     @Test
     @DisplayName("GET /api/books - возвращает список всех книг")
     void shouldReturnBooksList() throws Exception {
@@ -199,7 +198,7 @@ class BooksControllerTest {
         );
 
         //when
-        when(bookService.update(id,updateDto)).thenReturn(updated);
+        when(bookService.update(id, updateDto)).thenReturn(updated);
         when(messageSource.getMessage(eq("api.response.ok.save.book"),
                 any(Object[].class), any(Locale.class)))
                 .thenReturn("Book updated");
@@ -215,7 +214,7 @@ class BooksControllerTest {
                 .andExpect(jsonPath("$.author.id", Matchers.is(updated.author().id().intValue())))
                 .andExpect(jsonPath("$.genres", hasSize(updated.genres().size())));
 
-        verify(bookService, times(1)).update(id,updateDto);
+        verify(bookService, times(1)).update(id, updateDto);
     }
 
 
@@ -288,7 +287,7 @@ class BooksControllerTest {
     void shouldReturnResponse500WhenWrongUrl() throws Exception {
         //given
         BookFormDto formDto = new BookFormDto(
-                 "Новая книга", 1L, Set.of(1L));
+                "Новая книга", 1L, Set.of(1L));
         //then
         mockMvc.perform(post("/api/wrongUrl")
                         .contentType(APPLICATION_JSON)
@@ -296,5 +295,4 @@ class BooksControllerTest {
                 .andExpect(status().isInternalServerError())
                 .andDo(print());
     }
-
 }

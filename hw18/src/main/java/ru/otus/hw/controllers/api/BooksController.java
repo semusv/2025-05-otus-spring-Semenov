@@ -15,10 +15,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import ru.otus.hw.dto.api.BookFormDto;
 import ru.otus.hw.dto.BookDto;
 import ru.otus.hw.services.BookService;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 @SuppressWarnings("unused")
@@ -32,15 +34,15 @@ public class BooksController {
     private final MessageSource messageSource;
 
 
-    @CircuitBreaker(name = "getAllBooks")
+    @CircuitBreaker(name = "readOperations", fallbackMethod = "fallbackForGetAll")
     @RateLimiter(name = "bookService")
     @GetMapping("/api/books")
     @ResponseStatus(HttpStatus.OK)
     public List<BookDto> getAllBooks() {
-        return bookService.findAll();
+         return bookService.findAll();
     }
 
-    @CircuitBreaker(name = "getBook")
+    @CircuitBreaker(name = "readOperations", fallbackMethod = "fallbackForGetBook")
     @RateLimiter(name = "bookService")
     @GetMapping("/api/books/{id}")
     @ResponseStatus(HttpStatus.OK)
@@ -49,7 +51,7 @@ public class BooksController {
         return bookService.findById(id);
     }
 
-    @CircuitBreaker(name = "insertBook")
+    @CircuitBreaker(name = "writeOperations", fallbackMethod = "fallbackForWrite")
     @RateLimiter(name = "bookService")
     @PostMapping("/api/books")
     @ResponseStatus(HttpStatus.CREATED)
@@ -58,7 +60,7 @@ public class BooksController {
         return bookService.insert(bookCreateDto);
     }
 
-    @CircuitBreaker(name = "updateBook")
+    @CircuitBreaker(name = "writeOperations", fallbackMethod = "fallbackForUpdate")
     @RateLimiter(name = "bookService")
     @PutMapping("api/books/{id}")
     @ResponseStatus(HttpStatus.OK)
@@ -68,7 +70,7 @@ public class BooksController {
         return bookService.update(id, bookFormDto);
     }
 
-    @CircuitBreaker(name = "deleteBook")
+    @CircuitBreaker(name = "writeOperations", fallbackMethod = "fallbackForDelete")
     @RateLimiter(name = "bookService")
     @DeleteMapping("/api/books/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -76,4 +78,31 @@ public class BooksController {
             @PathVariable("id") Long id) {
         bookService.deleteById(id);
     }
+
+
+    public List<BookDto> fallbackForGetAll(Exception ex) {
+        log.warn("Fallback: returning empty list", ex);
+        return List.of();
+    }
+
+    public BookDto fallbackForGetBook(Long id, Exception ex) {
+        log.warn("Fallback: book not found for id {}", id, ex);
+        return null;
+    }
+
+    public BookDto fallbackForWrite(BookFormDto dto, Exception ex) {
+        log.error("Fallback: write operation failed", ex);
+        throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Service temporarily unavailable");
+    }
+
+    public BookDto fallbackForUpdate(Long id, BookFormDto dto, Exception ex) {
+        log.error("Fallback: update operation failed for id {}", id, ex);
+        throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Update operation temporarily unavailable");
+    }
+
+    public void fallbackForDelete(Long id, Exception ex) {
+        log.error("Fallback: delete operation failed for id {}", id, ex);
+        throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Delete operation temporarily unavailable");
+    }
+
 }
