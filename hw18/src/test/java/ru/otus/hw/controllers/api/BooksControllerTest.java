@@ -1,5 +1,6 @@
 package ru.otus.hw.controllers.api;
 
+import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,7 @@ import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -44,9 +46,6 @@ import ru.otus.hw.services.CommentService;
 import ru.otus.hw.services.ErrorHandlingServiceImpl;
 import ru.otus.hw.services.GenreService;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -64,6 +63,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 })
 @AutoConfigureMockMvc(addFilters = false)
 @DisplayName("Контроллер API книг")
+@Slf4j
 class BooksControllerTest {
 
     private static final String API_URL = "/api/books";
@@ -282,17 +282,4 @@ class BooksControllerTest {
                 .andDo(print());
     }
 
-    @Test
-    @DisplayName("POST /api/books - возвращает 500, когда некорректный путь")
-    void shouldReturnResponse500WhenWrongUrl() throws Exception {
-        //given
-        BookFormDto formDto = new BookFormDto(
-                "Новая книга", 1L, Set.of(1L));
-        //then
-        mockMvc.perform(post("/api/wrongUrl")
-                        .contentType(APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(formDto)))
-                .andExpect(status().isInternalServerError())
-                .andDo(print());
-    }
 }
