@@ -1,0 +1,47 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+
+  liquibase:
+    change-log: classpath:/db/changelog/db.changelog-test-master.yaml
+    contexts: test
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    generate-ddl: false
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        register-health-indicator: true
+        logging-enabled: true
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 3
+        failureRateThreshold: 34
+        waitDurationInOpenState: 500ms
+        permittedNumberOfCallsInHalfOpenState: 1
+        minimumNumberOfCalls: 1
+        slowCallDurationThreshold: 300ms
+  ratelimiter:
+    configs:
+      default:
+        timeoutDuration: 100ms
+        limitRefreshPeriod: 1s
+        limitForPeriod: 100
+
+
+logging:
+  level:
+    ROOT: ERROR
+
+server:
+  error:
+    whitelabel:
+      enabled: false

@@ -1,0 +1,155 @@
+server:
+  port: 8080
+  error:
+    whitelabel:
+      enabled: false
+    path: "/error"
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+      base-path: "/actuator"
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+    metrics:
+      enabled: true
+    logfile:
+      enabled: true
+    hystrix:
+      stream:
+        enabled: true
+  health:
+    defaults:
+      enabled: true
+  metrics:
+    export:
+      simple:
+        enabled: true
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
+
+spring:
+  application:
+    name: book-service-VVS
+  data:
+    rest:
+      base-path: /datarest
+  jmx:
+    enabled: true
+  mvc:
+    throw-exception-if-no-handler-found: true
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
+  thymeleaf:
+    cache: false
+  messages:
+    baseName: messages
+    encoding: UTF-8
+    # Не дает свалиться в системную локаль если не найден файл для переданной в MessageSource
+    # Если false то будут браться сообщения из дефолтного файла, если true, то из файла соответствующего системной локали
+    fallbackToSystemLocale: false
+  output:
+    ansi:
+      enabled: ALWAYS
+
+  datasource:
+    #    url: jdbc:h2:mem:maindb
+    driver-class-name: org.postgresql.Driver
+  #    password: ${SPRING_DATASOURCE_PASSWORD}
+  #    username: ${SPRING_DATASOURCE_USERNAME}
+  #    url: ${SPRING_DATASOURCE_URL}
+  liquibase:
+    enabled: true
+    contexts: dev
+
+
+  jpa:
+    #    database-platform: org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    generate-ddl: false
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+cloud:
+  circuitbreaker:
+    resilience4j:
+      config:
+        # АГРЕССИВНЫЕ НАСТРОЙКИ
+        default:
+          circuitBreaker:
+            slidingWindowType: COUNT_BASED
+            slidingWindowSize: 3                    # Всего 3 вызова в окне
+            failureRateThreshold: 34                # Сработает при 1 ошибке из 3 (33.3%)
+            waitDurationInOpenState: 5s             # Короткое время ожидания
+            permittedNumberOfCallsInHalfOpenState: 1 # Только 1 вызов в полуоткрытом состоянии
+            minimumNumberOfCalls: 1                 # Минимум 1 вызов для расчета
+            slowCallRateThreshold: 50               # 50% медленных вызовов откроет circuit breaker
+            slowCallDurationThreshold: 500ms        # Вызов медленный если > 500ms
+          timeLimiter:
+            timeoutDuration: 800ms                  # Таймаут для вызовов
+            cancelRunningFuture: true
+        # Отдельные настройки для чтения
+        readOperations:
+          circuitBreaker:
+            slidingWindowSize: 4
+            failureRateThreshold: 25                # 1 ошибка из 4
+            slowCallDurationThreshold: 300ms
+        # Отдельные настройки для записи
+        writeOperations:
+          circuitBreaker:
+            slidingWindowSize: 2
+            failureRateThreshold: 50                # 1 ошибка из 2
+            slowCallDurationThreshold: 1s
+
+resilience4j:
+  # Настройки Rate Limiter для тестирования
+  ratelimiter:
+    configs:
+      default:
+        timeoutDuration: 100ms        # Быстрый таймаут
+        limitRefreshPeriod: 5s        # Период обновления лимита
+        limitForPeriod: 3             # Всего 3 вызова за период
+    instances:
+      bookService:
+        baseConfig: default
+      readLimiter:
+        limitForPeriod: 10
+        limitRefreshPeriod: 1s
+      writeLimiter:
+        limitForPeriod: 5
+        limitRefreshPeriod: 2s
+  # Включим логирование для отладки
+  circuitbreaker:
+    configs:
+      default:
+        register-health-indicator: true
+        logging-enabled: true
+
+app:
+  templates:
+    error: "static/error-template.txt"
+
+logging:
+  file:
+    name: application.log
+    path: ./logs
+  level:
+    org.springframework.web: INFO
+    ru.otus.hw: DEBUG
+    io.github.resilience4j: DEBUG
+    org.springframework.cloud.circuitbreaker: DEBUG

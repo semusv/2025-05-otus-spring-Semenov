@@ -1,0 +1,210 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1759513172765-1
+      author: semva (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_authors
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: full_name
+                  type: VARCHAR(255)
+            tableName: authors
+  - changeSet:
+      id: 1759513172765-2
+      author: semva (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_books
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+              - column:
+                  name: author_id
+                  type: BIGINT
+            tableName: books
+  - changeSet:
+      id: 1759513172765-3
+      author: semva (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                  name: book_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: genre_id
+                  type: BIGINT
+            tableName: books_genres
+  - changeSet:
+      id: 1759513172765-4
+      author: semva (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_comments
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: text
+                  type: VARCHAR(255)
+              - column:
+                  name: book_id
+                  type: BIGINT
+            tableName: comments
+  - changeSet:
+      id: 1759513172765-5
+      author: semva (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_genres
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+            tableName: genres
+  - changeSet:
+      id: 1759513172765-6
+      author: semva (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                  name: user_id
+                  type: BIGINT
+              - column:
+                  name: role
+                  type: VARCHAR(20)
+            tableName: user_roles
+  - changeSet:
+      id: 1759513172765-7
+      author: semva (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_users
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: username
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: password
+                  type: VARCHAR(255)
+            tableName: users
+  - changeSet:
+      id: 1759513172765-8
+      author: semva (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: username
+            constraintName: UC_USERS_USERNAME
+            tableName: users
+  - changeSet:
+      id: 1759513172765-9
+      author: semva (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: book_id
+            baseTableName: books_genres
+            constraintName: FK_BOOGEN_ON_BOOK
+            referencedColumnNames: id
+            referencedTableName: books
+  - changeSet:
+      id: 1759513172765-10
+      author: semva (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: genre_id
+            baseTableName: books_genres
+            constraintName: FK_BOOGEN_ON_GENRE
+            referencedColumnNames: id
+            referencedTableName: genres
+  - changeSet:
+      id: 1759513172765-11
+      author: semva (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: author_id
+            baseTableName: books
+            constraintName: FK_BOOKS_ON_AUTHOR
+            referencedColumnNames: id
+            referencedTableName: authors
+  - changeSet:
+      id: 1759513172765-12
+      author: semva (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: book_id
+            baseTableName: comments
+            constraintName: FK_COMMENTS_ON_BOOK
+            referencedColumnNames: id
+            referencedTableName: books
+  - changeSet:
+      id: 1759513172765-13
+      author: semva (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: user_roles
+            constraintName: FK_USER_ROLES_ON_USER
+            referencedColumnNames: id
+            referencedTableName: users
+
